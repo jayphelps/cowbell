@@ -31,9 +31,8 @@ MLImport("ViewDelegateInterface.js");
          * 
          * @return  {void}
          */
-        __setTitle: function (value) {
-            this.title = value;
-            MLRouter.setTitle(value);
+        __titleDidChange: function (value) {
+            ML.Router.setTitle(value);
         },
 
         /**
@@ -42,7 +41,7 @@ MLImport("ViewDelegateInterface.js");
          * @return  {void}
          */
         __getTitle: function () {
-            return this.title || MLRouter.getTitle();
+            return this.title || ML.Router.getTitle();
         },
 
         /**
