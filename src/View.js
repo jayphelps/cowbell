@@ -303,7 +303,11 @@ MLImport("Class.js");
                     if (layer.innerText) {
                         return layer.innerText;
                     } else {
-                        return layer.innerHTML.replace(/\&lt;br\&gt;/gi,"\n").replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
+                        var value = layer.innerHTML
+                            .replace(/\&lt;br\&gt;/gi,"\n")
+                            .replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
+
+                        return value;
                     }
                 }
             }
@@ -441,7 +445,9 @@ MLImport("Class.js");
             // Create our layer HTML element=
             this.layer = document.createElement(this.tagName);
 
-            if (!this.layer) throw Error("Failed to render view. Layer value: " + this.layer);
+            if (!this.layer) {
+                throw Error("Failed to render view. Layer value: " + this.layer);
+            }
 
             this.setIsRendered(YES);
             this.classList._updateClassName();
