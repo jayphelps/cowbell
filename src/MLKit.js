@@ -10,10 +10,10 @@
     if (typeof console === "undefined") {
         window.console = {}
 
-        console.debug = console.dir = console.error = console.groupCollapsed =
-        console.groupEnd = console.info = console.log = console.time =
-        console.timeEnd = console.trace = console.warn = console.assert = 
-        console.profile = function () {};
+        console.profile  = console.assert = console.info = console.time  =
+        console.timeEnd  = console.debug  = console.warn = console.error =
+        console.groupEnd = console.trace  = console.dir  = console.log   =
+        console.groupCollapsed = function () {};
     }
 
     // Alternative booleans for people who prefer obj-c style
