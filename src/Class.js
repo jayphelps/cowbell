@@ -41,18 +41,18 @@
     // Work in progress...Only works if the protocol types are constructors but
     // should allow them to be instances of objects as well
     function compareObjectWithProtocol(obj, protocol) {
-    	for (var key in protocol) {
-    		var imp = obj[key];
+        for (var key in protocol) {
+            var imp = obj[key];
 
-			if (typeof imp === "undefined") throw Error("Class does not implement member: " + key);
+            if (typeof imp === "undefined") throw Error("Class does not implement member: " + key);
 
-			var impConstructor = imp && imp.constructor;
-			var protocolConstructor = protocol[key];
+            var impConstructor = imp && imp.constructor;
+            var protocolConstructor = protocol[key];
 
-			if (impConstructor !== protocolConstructor) {
-				throw Error('Implements ' +  key + ' member but is the wrong type. Requires ' + protocolConstructor.name + ' but defined ' + (impConstructor && impConstructor.name) + '.');
-			}
-		}
+            if (impConstructor !== protocolConstructor) {
+                throw Error('Implements ' +  key + ' member but is the wrong type. Requires ' + protocolConstructor.name + ' but defined ' + (impConstructor && impConstructor.name) + '.');
+            }
+        }
     }
 
     // Used during the inheritance process to prevent the class definition
@@ -60,54 +60,54 @@
     var classIsInitializing = false;
 
     /**
-	 * No documentation available yet.
-	 * 
-	 * @author		Jay Phelps
- 	 * @since		0.1
-	 */	
+     * No documentation available yet.
+     * 
+     * @author      Jay Phelps
+     * @since       0.1
+     */ 
     var Class = function () {};
 
     Class.prototype = /** @lends Class# */ {
 
-    	/**
-		 * No documentation available yet.
-		 * 
-		 * @return 	{void}
-		 */
-    	addObserver: function (key, observer) {
-			var observersKey = "__" + key + "Observers";
-			var observers = this[observersKey] || (this[observersKey] = []);
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        addObserver: function (key, observer) {
+            var observersKey = "__" + key + "Observers";
+            var observers = this[observersKey] || (this[observersKey] = []);
 
-			observers.push(observer);
-		},
-
-		/**
-		 * No documentation available yet.
-		 * 
-		 * @return 	{void}
-		 */
-		removeObserver: function (key, observer) {
-			var observersKey = "__" + key + "Observers";
-			var observers = this[observersKey];
-
-			if (observers) {
-				var index = ML.indexOf(observers, observer);
-
-				if (index) {
-					return observers.splice(index);
-				}
-			}
-
-			return false;
-		},
+            observers.push(observer);
+        },
 
         /**
-		 * Used internally to trigger any observers on the class when a
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        removeObserver: function (key, observer) {
+            var observersKey = "__" + key + "Observers";
+            var observers = this[observersKey];
+
+            if (observers) {
+                var index = ML.indexOf(observers, observer);
+
+                if (index) {
+                    return observers.splice(index);
+                }
+            }
+
+            return false;
+        },
+
+        /**
+         * Used internally to trigger any observers on the class when a
          * .set() or .setKey() is called.
-		 * 
-		 * @private
-		 * @return 	{void}
-		 */
+         * 
+         * @private
+         * @return  {void}
+         */
         _triggerObserversForKey: function (key) {
             // First look for an observer in the class definition
             var observer = this["__" + key + "DidChange"];
@@ -130,12 +130,12 @@
         },
 
         /**
-		 * Used to set any property on a class instance. Will notify any observers
+         * Used to set any property on a class instance. Will notify any observers
          * if the value changes and will also create getter/setters if this is
          * this first time the property is being set.
-		 * 
-		 * @return 	{void}
-		 */
+         * 
+         * @return  {void}
+         */
         set: function (key, value) {
             var Key = upperCaseFirst(key);
             var setter = this['set'+Key];
@@ -148,102 +148,102 @@
             }
         },
 
-	    /**
-		 * Bind an event, specified by a string name, `ev`, to a `callback` function.
-	     * Passing `'all'` will bind the callback to all events fired.
-		 * 
-		 * @return {Class} this
-		 */
-	    on: function (ev, callback, context) {
-	        var calls = this._callbacks || (this._callbacks = {});
-	        var list = calls[ev] || (calls[ev] = []);
-	        list.push([callback, context]);
-	        return this;
-	    },
+        /**
+         * Bind an event, specified by a string name, `ev`, to a `callback` function.
+         * Passing `'all'` will bind the callback to all events fired.
+         * 
+         * @return {Class} this
+         */
+        on: function (ev, callback, context) {
+            var calls = this._callbacks || (this._callbacks = {});
+            var list = calls[ev] || (calls[ev] = []);
+            list.push([callback, context]);
+            return this;
+        },
 
-	    /**
-		 * Remove one or many callbacks. If `callback` is null, removes all
-	     * callbacks for the event. If `ev` is null, removes all bound callbacks
-	     * for all events.
-		 * 
-		 * @return {Class} this
-		 */
-	    off: function (ev, callback) {
-	        var calls;
-	        if (!ev) {
-	            this._callbacks = {};
-	        } else if (calls = this._callbacks) {
-	            if (!callback) {
-	                calls[ev] = [];
-	            } else {
-	                var list = calls[ev];
-	                if (!list) return this;
-	                for (var i = 0, l = list.length; i < l; i++) {
-	                    if (list[i] && callback === list[i][0]) {
-	                        list[i] = null;
-	                        break;
-	                    }
-	                }
-	            }
-	        }
-	        return this;
-	    },
+        /**
+         * Remove one or many callbacks. If `callback` is null, removes all
+         * callbacks for the event. If `ev` is null, removes all bound callbacks
+         * for all events.
+         * 
+         * @return {Class} this
+         */
+        off: function (ev, callback) {
+            var calls;
+            if (!ev) {
+                this._callbacks = {};
+            } else if (calls = this._callbacks) {
+                if (!callback) {
+                    calls[ev] = [];
+                } else {
+                    var list = calls[ev];
+                    if (!list) return this;
+                    for (var i = 0, l = list.length; i < l; i++) {
+                        if (list[i] && callback === list[i][0]) {
+                            list[i] = null;
+                            break;
+                        }
+                    }
+                }
+            }
+            return this;
+        },
 
-	    /**
-		 * Trigger an event, firing all bound callbacks. Callbacks are passed the
-	     * same arguments as `trigger` is, apart from the event name.
-	     * Listening for `'all'` passes the true event name as the first argument.
-		 * 
-		 * @return {Class} this
-		 */
-	    trigger: function (eventName) {
-	        var list;
-	        var calls;
-	        var ev;
-	        var callback;
-	        var args;
+        /**
+         * Trigger an event, firing all bound callbacks. Callbacks are passed the
+         * same arguments as `trigger` is, apart from the event name.
+         * Listening for `'all'` passes the true event name as the first argument.
+         * 
+         * @return {Class} this
+         */
+        trigger: function (eventName) {
+            var list;
+            var calls;
+            var ev;
+            var callback;
+            var args;
 
-	        var both = 2;
+            var both = 2;
 
-	        var calls = this._callbacks;
+            var calls = this._callbacks;
 
-	        // If there aren't any callbacks let's get outta here!
-	        if (!calls) {
-	            return this;
-	        }
+            // If there aren't any callbacks let's get outta here!
+            if (!calls) {
+                return this;
+            }
 
-	        while (both--) {
-	            ev = both ? eventName : "all";
-	            if (list = calls[ev]) {
-	                for (var i = 0, l = list.length; i < l; i++) {
-	                    if (!(callback = list[i])) {
-	                        list.splice(i, 1);
-	                        i--;
-	                        l--;
-	                    } else {
-	                        args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
-	                        callback[0].apply(callback[1] || this, args);
-	                    }
-	                }
-	            }
-	        }
-	        return this;
-	    },
+            while (both--) {
+                ev = both ? eventName : "all";
+                if (list = calls[ev]) {
+                    for (var i = 0, l = list.length; i < l; i++) {
+                        if (!(callback = list[i])) {
+                            list.splice(i, 1);
+                            i--;
+                            l--;
+                        } else {
+                            args = both ? Array.prototype.slice.call(arguments, 1) : arguments;
+                            callback[0].apply(callback[1] || this, args);
+                        }
+                    }
+                }
+            }
+            return this;
+        },
 
-	    /**
-		 * Bind an event, just like using .on() but will unbind itself
-	     * automatically after being triggered once.
-		 * 
-		 * @return 	{void}
-		 */
-	    once: function (ev, callback, context) {
-	        var instance = this;
+        /**
+         * Bind an event, just like using .on() but will unbind itself
+         * automatically after being triggered once.
+         * 
+         * @return  {void}
+         */
+        once: function (ev, callback, context) {
+            var instance = this;
 
-	        this.on(ev, function internal() {
-	            callback.apply(this, arguments);
-	            instance.off(ev, internal, context);
-	        }, context);
-	    }
+            this.on(ev, function internal() {
+                callback.apply(this, arguments);
+                instance.off(ev, internal, context);
+            }, context);
+        }
 
     };
 
@@ -253,8 +253,8 @@
      * Declare a class definition.
      * 
      * Inspired by: John Resig's Simple JavaScript Inheritance
- 	 *   - who was inspired by base2 and Prototype
- 	 *   - who were inspired by aliens
+     *   - who was inspired by base2 and Prototype
+     *   - who were inspired by aliens
      */
     Class.create = function (arg1, arg2, arg3) {
         arg1 = arg1 || {};
@@ -291,13 +291,13 @@
         // If no super class was provided, we'll inherit from the base Class
         // which is "this"
         if (typeof superClass === "undefined") {
-        	superClass = this;
+            superClass = this;
         }
 
         // Before we attempt a "new superClass()" we need to be sure it's
         // callable!
         if (typeof superClass !== "function") {
-        	throw Error("Failed to extend super class: " + superClass);
+            throw Error("Failed to extend super class: " + superClass);
         }
 
         // Instantiate a base class but only create the instance,
@@ -326,21 +326,21 @@
 
             // Push the main constructor in first
             if (this.__constructor) {  
-            	constructors.push(this.__constructor);
+                constructors.push(this.__constructor);
             }
 
             var superDuper = this.super;
 
             // Walk the super class chain pushing the constructors in the stack
             while (superDuper && superDuper.__constructor) {
-            	constructors.push(superDuper.__constructor);
-            	superDuper = superDuper.super;
-            }	
+                constructors.push(superDuper.__constructor);
+                superDuper = superDuper.super;
+            }   
 
             // Run all the constructors, starting from the bottom (reverse)
             // so subclasses have a chance to override parent
             for (var i = constructors.length-1, l = -1; i > l; i--) {
-            	constructors[i].apply(this, arguments);
+                constructors[i].apply(this, arguments);
             }
         }
 
@@ -375,11 +375,11 @@
         // If an interface protocol that this class should implement, let's
         // go ahead and confirm it does
         if (protocol) {
-        	// Go through instance members first
-			compareObjectWithProtocol(prototype, protocol.instanceMembers);
-			// Now compare static members
-			compareObjectWithProtocol(staticMembers, protocol.staticMembers);
-		}
+            // Go through instance members first
+            compareObjectWithProtocol(prototype, protocol.instanceMembers);
+            // Now compare static members
+            compareObjectWithProtocol(staticMembers, protocol.staticMembers);
+        }
 
         return Class;
     };
