@@ -1,49 +1,6 @@
 /**
- * @namespace
- */
-window.ML = window.ML || {};
-
-// Since we don't know what order this script will be included we have to be
-// sure we don't clobber a previously included version of library we require.
-// So we stash any conflicts, include our versions and reassign them, then put
-// the stashed version back.
-(function (window, document) {
-
-    var libs = ["_"];
-    var stash = {};
-
-    for (var i = 0, l = libs.length; i < l; i++) {
-        var libName = libs[i];
-        stash[libName] = window[libName];
-    }
-
-    MLImport("../lib/underscore.js");
-
-    _.extend(ML, window._);
-
-    for (var i = 0, l = libs.length; i < l; i++) {
-        var libName = libs[i];
-
-        try {
-            delete window[libName];
-        } catch (e) {
-            // IE <= 8 throws nasty exceptions
-            // for window property deletes...
-            window[libName] = undefined;
-        }
-
-        var stashedLib = stash[libName];
-
-        if (stashedLib) {
-            window[libName] = stashedLib;
-        }
-    }
-
-})(window, document);
-
-/**
- * NOTE: any script included inside here is in "strict mode", including any
- * files you may MLImport()!
+ * WARNING: MLKit opts into "strict mode". Any script included inside of here
+ * has those rules applied, including files we MLImport()!
  */
 (function (window, document) {
     "use strict";
@@ -59,20 +16,20 @@ window.ML = window.ML || {};
         console.profile = function () {};
     }
 
+    // Alternative booleans for people who prefer obj-c style
     window.YES = true;
     window.NO = false;
 
-    var ML = window.ML;
+    /**
+     * Primary namespace for MLKit 
+     *
+     * @namespace
+     */
+    var ML = window.ML = window.ML || {};
 
     ML.VERSION = ML.version = "0.1";
 
-    // To preserve memory, this dummy function is used internally as a safe
-    // placeholder for method implementations that do nothing.
-    ML.dummyFunction = function () {};
-
-    ML.upperCaseFirst = function (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
-    };
+    MLImport("utilities.js");
 
     MLImport("Class.js");
     MLImport("Object.js");
