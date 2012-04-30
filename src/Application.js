@@ -36,7 +36,6 @@
      * FIXME: Description needed.
      *
      * @function        
-     * @extends     MLControlView
      * @author      Jay Phelps
      * @since       0.1
      */
