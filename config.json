@@ -1,0 +1,8 @@
+{
+	"output": "build/",
+	"packages": {
+		"MLKit.js": [
+			"src/MLKit.js"
+		]
+	}
+}

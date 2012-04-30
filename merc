@@ -1,0 +1,594 @@
+#!/usr/bin/env node
+
+/**
+ * WARNING: This build script is taken from an oldddd version of another project
+ * I'm working on and hacked to work for MLKit temporarily. It badly needs clean
+ * up and there are likely issues if you stray from the typical path of usage.
+ */
+
+var fs = require('fs');
+var path = require('path');
+var util = require('util');
+var vm = require('vm');
+var exec = require('child_process').exec;
+
+var jsp = require('./tools/uglify-js').parser;
+var pro = require('./tools/uglify-js').uglify;
+
+var cleanCSS = require('./tools/clean-css');
+
+var options = {
+	watch: false,
+	minify: false,
+	verbose: false,
+	outputFilePath: '',
+	config: {},
+	configFilePath: __dirname + '/config.json',
+	buildPath: 'build/',
+	tmpPath: 'tmp/',
+	splashTemplate: '',
+	splashOutput: '',
+	debug: false,
+	document: false,
+	base64EncodeCSSImages: true
+};
+
+/* https://github.com/coolaj86/node-examples-js/tree/master/fs.extra */
+(function(){"use strict";var a=require("fs"),b=require("util");a.copy=function(c,d,e){function f(f){var g,h;if(!f){return e(new Error("File "+d+" exists."))}a.stat(c,function(f){if(f){return e(f)}g=a.createReadStream(c);h=a.createWriteStream(d);b.pump(g,h,e)})}a.stat(d,f)};a.move=function(b,c,d){function e(e){if(!e){return d(null)}a.copy(b,c,function(c){if(!c){a.unlink(b,d)}else{d(c)}})}a.stat(c,function(f){if(!f){return d(new Error("File "+c+" exists."))}a.rename(b,c,e)})}})();
+
+/**   
+ * Crc32 is a JavaScript function for computing the CRC32 of a string  
+ * Version: 1.2 - 2006/11 - http://noteslog.com/category/javascript/ 
+ * Copyright (c) 2006 Andrea Ercolino 
+ * http://www.opensource.org/licenses/mit-license.php 
+ */ 
+(function() { 
+	var table = "00000000 77073096 EE0E612C 990951BA 076DC419 706AF48F E963A535 9E6495A3 0EDB8832 79DCB8A4 E0D5E91E 97D2D988 09B64C2B 7EB17CBD E7B82D07 90BF1D91 1DB71064 6AB020F2 F3B97148 84BE41DE 1ADAD47D 6DDDE4EB F4D4B551 83D385C7 136C9856 646BA8C0 FD62F97A 8A65C9EC 14015C4F 63066CD9 FA0F3D63 8D080DF5 3B6E20C8 4C69105E D56041E4 A2677172 3C03E4D1 4B04D447 D20D85FD A50AB56B 35B5A8FA 42B2986C DBBBC9D6 ACBCF940 32D86CE3 45DF5C75 DCD60DCF ABD13D59 26D930AC 51DE003A C8D75180 BFD06116 21B4F4B5 56B3C423 CFBA9599 B8BDA50F 2802B89E 5F058808 C60CD9B2 B10BE924 2F6F7C87 58684C11 C1611DAB B6662D3D 76DC4190 01DB7106 98D220BC EFD5102A 71B18589 06B6B51F 9FBFE4A5 E8B8D433 7807C9A2 0F00F934 9609A88E E10E9818 7F6A0DBB 086D3D2D 91646C97 E6635C01 6B6B51F4 1C6C6162 856530D8 F262004E 6C0695ED 1B01A57B 8208F4C1 F50FC457 65B0D9C6 12B7E950 8BBEB8EA FCB9887C 62DD1DDF 15DA2D49 8CD37CF3 FBD44C65 4DB26158 3AB551CE A3BC0074 D4BB30E2 4ADFA541 3DD895D7 A4D1C46D D3D6F4FB 4369E96A 346ED9FC AD678846 DA60B8D0 44042D73 33031DE5 AA0A4C5F DD0D7CC9 5005713C 270241AA BE0B1010 C90C2086 5768B525 206F85B3 B966D409 CE61E49F 5EDEF90E 29D9C998 B0D09822 C7D7A8B4 59B33D17 2EB40D81 B7BD5C3B C0BA6CAD EDB88320 9ABFB3B6 03B6E20C 74B1D29A EAD54739 9DD277AF 04DB2615 73DC1683 E3630B12 94643B84 0D6D6A3E 7A6A5AA8 E40ECF0B 9309FF9D 0A00AE27 7D079EB1 F00F9344 8708A3D2 1E01F268 6906C2FE F762575D 806567CB 196C3671 6E6B06E7 FED41B76 89D32BE0 10DA7A5A 67DD4ACC F9B9DF6F 8EBEEFF9 17B7BE43 60B08ED5 D6D6A3E8 A1D1937E 38D8C2C4 4FDFF252 D1BB67F1 A6BC5767 3FB506DD 48B2364B D80D2BDA AF0A1B4C 36034AF6 41047A60 DF60EFC3 A867DF55 316E8EEF 4669BE79 CB61B38C BC66831A 256FD2A0 5268E236 CC0C7795 BB0B4703 220216B9 5505262F C5BA3BBE B2BD0B28 2BB45A92 5CB36A04 C2D7FFA7 B5D0CF31 2CD99E8B 5BDEAE1D 9B64C2B0 EC63F226 756AA39C 026D930A 9C0906A9 EB0E363F 72076785 05005713 95BF4A82 E2B87A14 7BB12BAE 0CB61B38 92D28E9B E5D5BE0D 7CDCEFB7 0BDBDF21 86D3D2D4 F1D4E242 68DDB3F8 1FDA836E 81BE16CD F6B9265B 6FB077E1 18B74777 88085AE6 FF0F6A70 66063BCA 11010B5C 8F659EFF F862AE69 616BFFD3 166CCF45 A00AE278 D70DD2EE 4E048354 3903B3C2 A7672661 D06016F7 4969474D 3E6E77DB AED16A4A D9D65ADC 40DF0B66 37D83BF0 A9BCAE53 DEBB9EC5 47B2CF7F 30B5FFE9 BDBDF21C CABAC28A 53B39330 24B4A3A6 BAD03605 CDD70693 54DE5729 23D967BF B3667A2E C4614AB8 5D681B02 2A6F2B94 B40BBE37 C30C8EA1 5A05DF1B 2D02EF8D";     
+ 
+	/* Number */ 
+	crc32 = function( /* String */ str, /* Number */ crc ) { 
+		if( crc == undefined ) crc = 0; 
+		var n = 0; //a number between 0 and 255 
+		var x = 0; //an hex number 
+ 
+		crc = crc ^ (-1); 
+		for( var i = 0, iTop = str.length; i < iTop; i++ ) { 
+			n = ( crc ^ str.charCodeAt( i ) ) & 0xFF; 
+			x = "0x" + table.substr( n * 9, 8 ); 
+			crc = ( crc >>> 8 ) ^ x; 
+		} 
+		return crc ^ (-1); 
+	}; 
+})();
+
+/**
+ * doT.js
+ * 2011, Laura Doktorova
+ * https://github.com/olado/doT
+ * 
+ * doT.js is an open source component of http://bebedo.com
+ * 
+ *  doT is a custom blend of templating functions from jQote2.js
+ * (jQuery plugin) by aefxx (http://aefxx.com/jquery-plugins/jqote2/)
+ *  and underscore.js (http://documentcloud.github.com/underscore/)
+ * plus extensions.
+ * 
+ * Licensed under the MIT license.
+ */
+(function(){function resolveDefs(c,block,def){return(typeof block=="string"?block:block.toString()).replace(c.define,function(match,code,assign,value){return code.indexOf("def.")===0&&(code=code.substring(4)),code in def||(assign===":"?def[code]=value:eval("def[code]="+value)),""}).replace(c.use,function(match,code){var v=eval(code);return v?resolveDefs(c,v,def):v})}var doT={version:"0.1.7"};this.doT=doT,doT.templateSettings={evaluate:/\{\{([\s\S]+?)\}\}/g,interpolate:/\{\{=([\s\S]+?)\}\}/g,encode:/\{\{!([\s\S]+?)\}\}/g,use:/\{\{#([\s\S]+?)\}\}/g,define:/\{\{##\s*([\w\.$]+)\s*(\:|=)([\s\S]+?)#\}\}/g,conditionalStart:/\{\{\?([\s\S]+?)\}\}/g,conditionalEnd:/\{\{\?\}\}/g,varname:"it",strip:!0,append:!0},doT.template=function(a,b,c){b=b||doT.templateSettings;var d=b.append?"'+(":"';out+=(",e=b.append?")+'":");out+='",f=b.use||b.define?resolveDefs(b,a,c||{}):a;f=("var out='"+(b.strip?f.replace(/\s*<!\[CDATA\[\s*|\s*\]\]>\s*|[\r\n\t]|(\/\*[\s\S]*?\*\/)/g,""):f).replace(/\\/g,"\\\\").replace(/'/g,"\\'").replace(b.interpolate,function(a,b){return d+b.replace(/\\'/g,"'").replace(/\\\\/g,"\\").replace(/[\r\t\n]/g," ")+e}).replace(b.encode,function(a,b){return d+b.replace(/\\'/g,"'").replace(/\\\\/g,"\\").replace(/[\r\t\n]/g," ")+").toString().replace(/&(?!\\w+;)/g, '&#38;').split('<').join('&#60;').split('>').join('&#62;').split('"+'"'+"').join('&#34;').split("+'"'+"'"+'"'+").join('&#39;').split('/').join('&#47;'"+e}).replace(b.conditionalEnd,function(a,b){return"';}out+='"}).replace(b.conditionalStart,function(a,b){var c="if("+b+"){";return"';"+c.replace(/\\'/g,"'").replace(/\\\\/g,"\\").replace(/[\r\t\n]/g," ")+"out+='"}).replace(b.evaluate,function(a,b){return"';"+b.replace(/\\'/g,"'").replace(/\\\\/g,"\\").replace(/[\r\t\n]/g," ")+"out+='"})+"';return out;").replace(/\n/g,"\\n").replace(/\t/g,"\\t").replace(/\r/g,"\\r").split("out+='';").join("").split("var out='';out+=").join("var out=");try{return function(a,b){var c=new Function(b);return function(a){return c.apply(a)}}(b.varname,f)}catch(g){throw typeof console!="undefined"&&console.log("Could not create a template function: "+f),g}},doT.compile=function(a,b){return doT.template(a,null,b)}})()
+
+doT.templateSettings.strip = false;
+
+var logPrefix = 'merc: ';
+
+function MLLog(msg, color) {
+	var defaultColor = '\033[00;00m';
+	
+	var output = logPrefix;
+	
+	switch (color) {
+		case 'black':
+			output += '\033[0;30m';
+			break;
+		case 'red':
+			output += '\033[01;31m';
+			break;
+		case 'green':
+			output += '\033[0;32m';
+			break;
+		case 'yellow':
+			output += '\033[0;33m';
+			break;
+		case 'blue':
+			output += '\033[0;34m';
+			break;
+		case 'magenta':
+			output += '\033[0;35m';
+			break;
+		case 'cyan':
+			output += '\033[0;36m';
+			break;
+		case 'white':
+		case 'grey':
+			output += '\033[0;37m';	
+			break;
+		default:
+			output += '';
+	}
+
+	output += msg + defaultColor;
+	
+	console.log(output);
+}
+
+function getFileContents(filePath, encoding) {
+	var content = null;
+	var encoding = (typeof encoding === 'undefined') ? 'utf-8' : encoding;
+	
+	if ( path.existsSync(filePath) ) {			
+		content = fs.readFileSync(filePath, encoding=encoding);
+	}
+	
+	return content;
+}
+
+function getFileSize(filename, callback) {
+	var stat = fs.statSync(filename);
+
+	return stat.size;
+}
+
+function die(msg) {	
+	if (msg) MLLog(msg, 'red');
+	
+	process.exit(1);
+}
+
+function warning(msg) {
+	MLLog(msg, 'yellow');
+}
+
+function slice(a, start) {
+		return Array.prototype.slice.call(a, start == null ? 0 : start);
+}
+
+function showHelp() {
+	console.log('\n\033[37;40m                                    777777                                      \n                                77  777777777                                   \n                               77    777777777                                  \n                               777   777777777?                                 \n                              77777777777777777                                 \n                               7777777777777777                                 \n                              77777777777777777                                 \n                                7777777777777                                   \n                        \033[31;40m~~~~~~: \033[37;40m7777777777777                                   \n                      \033[31;40m:~~~~~~~~~~  \033[37;40m77777777                                     \n                     \033[31;40m:~~~~~~~~~~~:~:                                            \n                    \033[31;40m::~~~~~~~~~~~~~~::~~~:~                        \033[37;40m7 :          \n                   \033[31;40m:~~~~~:~\033[37;40m7777777\033[31;40m:~~~~~~~~~:                  \033[37;40m777777777        \n                  \033[31;40m:~~~~~~~\033[37;40m7777777777\033[31;40m::~~~~~~::               \033[37;40m777777777777,      \n                 \033[31;40m::~~~~~:\033[37;40m7777777777777\033[31;40m~~~~~~~~::            \033[37;40m7 7   7 7   7       \n                \033[31;40m:~~~~~~:\033[37;40m7777777777777777\033[31;40m:~~~~~~~::          \033[37;40m7 7777777     +     \n                \033[31;40m:~~~~~~\033[37;40m777777777777777777\033[31;40m=~~~~~~~~~:        \033[37;40m77777777777777+     \n               \033[31;40m:~~~~~~\033[37;40m7777777777 ? ~ 777777\033[31;40m:~~~~~~~~::      \033[37;40m77777777777777      \n              \033[31;40m~:~~~~:~\033[37;40m77 777 7          77777\033[31;40m:~~~~~~~~:~~    \033[37;40m77777777777 ,      \n             \033[31;40m~~~~~~~~\033[37;40m7777+ ,               7777\033[31;40m~~~~~~~~~~~~~~   \033[37;40m7 777777        \n            \033[31;40m,~~~~~~:\033[37;40m777777                   = 77\033[31;40m:~~~~~~~~~~~~:   \033[37;40m7 7:          \n            \033[31;40m~~~~~~~\033[37;40m77, 7                        777\033[31;40m=::~~~~~~~~~~~~~~:           \n           \033[31;40m:~~~~~~\033[37;40mI77 I                           77777\033[31;40m:::~~~~~~~~~~:~          \n          \033[31;40m~~~~~~~:\033[37;40m777                               7777777777\033[31;40m~~~~~~~~~         \n          \033[31;40m:~~~~:~\033[37;40m777                                   777777777\033[31;40m:~~~~~:         \n         \033[31;40m~~~~~~:\033[37;40m77                                     777777777\033[31;40m:~~~~~:         \n        \033[31;40m~~~~~~::\033[37;40m7                                       7777777\033[31;40m~~~~~~~:         \n        :~~~~~:                                        \033[37;40m7777777\033[31;40m~:~~~~::          \n       :~~~~~~                                          \033[37;40m77777\033[31;40m~~~~~~~~           \n       ~~~~~~:                                       \033[37;40m7777777\033[31;40m:~~~~~~:            \n      ~:~~~~~                                     \033[37;40m7~777777\033[31;40m=~~~~~~~             \n      ~~~~~~~                                     \033[37;40m777777 I\033[31;40m ~~~~~~:              \n     :~~~~~:                                     \033[37;40m777777 7\033[31;40m ~~~~~~:,              \n     :~~~~~~                                      \033[37;40m777777\033[31;40m ::~~~~::               \n    ~:~~~~~                                             ~~~~~~::                \n    ~~~~~~~                                             :~~~~~~                 \n    ~~~~~:~                                            :~~~~~:                  \n    ~~~~~::                                           ::~~~~::                  \n    ~~~~~~,                                          ~~~~~~~~                   \n    ~~~~~:                                           :~~~~~:                    \n    ~~~~~~                                          ~~~~~~~                     \n    ~~~~~:                                         ~~~~~~~:                     \n    ~~~~~:                                        :~~~~~~:                      \n   ,~~~~~:\033[37;40m7?                                      \033[31;40m~~~~~::                       \n    ~~~~~:\033[37;40m77                                     \033[31;40m~~~~~~~                        \n    ~~~~~:\033[37;40m7  \033[35;40m:                                  \033[31;40m~~~~~~~:                        \n    ~~~~~:\033[37;40m777\033[35;40m:::::,                            \033[31;40m,\033[31;40m~~~~~~~                         \n    ~~~~~:\033[37;40m7 7\033[35;40m :::::::                          \033[31;40m:~~~~:~                          \n    ~~~~~~\033[37;40mI7 7\033[35;40m::::::::                       \033[31;40m ~:~~~~~,                          \n    ~~~~~~?\033[37;40m 777\033[35;40m::::::::,                     \033[31;40m~~:~~~~:                           \n    ~~~~~:~\033[37;40m7777\033[35;40m:::::::::,                    \033[31;40m:~~~~~:                            \n    ~~~~~~:\033[37;40m7777\033[35;40m::::::::::                  \033[31;40m ~~~~~~~                             \n    ~~~~~~~\033[37;40m7777\033[35;40m:::::::::::  ,:         \033[37;40m7777 \033[31;40m~~~~~~~                             \n    ~~~~~~~\033[37;40m77777\033[35;40m:::::::::::  :::        \033[37;40m7777\033[31;40m~~~~~~~                             \n    ::~~~~~:\033[37;40m7777\033[35;40m:::::::::::  ::::       \033[37;40m7777\033[31;40m~~~~~~~                             \n     :~~~~~:~\033[37;40m777\033[35;40m::::::::::: ::::::      \033[37;40m7777\033[31;40m~~~~~~~                             \n      ~~~~~~:~~\033[37;40m7I\033[35;40m::::::::::::::::::     \033[37;40m7777\033[31;40m~~~~~~~                             \n       :~~~~~~~::\033[37;40m7~\033[35;40m::::::::::::::::      \033[37;40m77 \033[31;40m~~~~~~~                             \n        :~~~~~~~~:~:\033[37;40m77\033[35;40m::::::::::::::    \033[37;40m7777\033[31;40m~~~~~~~                             \n          :~~~~~~~~~::\033[37;40m7777\033[35;40m::::::::::    \033[37;40m7777\033[31;40m~~~~~~~                             \n            :~~~~~~~~~::~\033[37;40m?777\033[35;40m:::::::    \033[37;40m7777+\033[31;40m:~~~~~                             \n              ,:~~~~~~~~~:::~\033[37;40m777\033[35;40m:::::  \033[37;40m77777+\033[31;40m:~~~~~                             \n                 ~:~~~~~~~~~:::::\033[37;40m7+\033[35;40m::     \033[37;40m77\033[31;40m~~~~~~~                             \n                    ~~~~~~~~~~~~~~:~~\033[37;40mI7777~\033[35;40m:\033[31;40m~~~~~~~                             \n                       ~~~~~~~~~~~~~~~:~:~:~~~~~~:                              \n                          ,~~~~~~~~~~~~~~~~~~~~~~                               \n                              ~:~~~~~~~~~~~~~~~,                                \n                                   ~~~~~~~~~:                                   \n\033[00;00m');
+	console.log('');
+	console.log('Mercury Engine');
+	console.log('Copyright (c) 2012 Jay Phelps');
+	console.log('MIT Licensed');
+	console.log('');
+	console.log('Options:');
+	console.log('  -m, --minify     reduce package output file size by removing unnecessary whitespace and restructuring code.');
+	console.log('  -w, --watch      watch the included src files for changes and auto-rebuild');
+	console.log('  -d, --debug      override config setting for debugging output');
+	console.log('  -c, --config     provide a config.json path');
+	console.log('  -d, --document   document package code with JSDoc');
+	console.log('  -h, --help       show this file');
+	console.log('  -v, --verbose    does nothing at this point');
+	console.log('  -o, --output     override the output path');
+	console.log('');
+}
+
+function show_copyright(comments) {
+	var ret = "";
+	for (var i = 0; i < comments.length; ++i) {
+		var c = comments[i];
+		if (c.type == "comment1") {
+			ret += "//" + c.value + "\n";
+		} else {
+			ret += "/*" + c.value + "*/";
+		}
+	}
+	return ret;
+};
+
+function uglify(sourceCode) {
+	var uglifiedCode = '';
+
+	var tok = jsp.tokenizer(sourceCode);
+	var c = tok();
+	uglifiedCode += show_copyright(c.comments_before);
+
+	// Parse code and get the initial AST
+	var ast = jsp.parse(sourceCode);
+	// Get a new AST with mangled names
+	ast = pro.ast_mangle(ast);
+	// Get an AST with compression optimizations
+	ast = pro.ast_squeeze(ast);
+	// Final compressed code here
+	uglifiedCode += pro.gen_code(ast);
+	
+	return uglifiedCode;
+}
+
+function include(filePath, fileType) {
+	var exp = /.*MLImport\s*\(\s*['|"]([a-zA-Z0-9_\.\-\/]*)['|"]\s*\)\s*;?/g;
+
+	var currentDir = (filePath.indexOf('/') > -1) ? filePath.replace(/\/[^\/]+$/, '/') : '';
+	
+	var resolvedPath = path.resolve(filePath);
+	
+	if (include.cache[resolvedPath]) {
+		MLLog('File already included: ' + filePath, 'grey');
+		return '';
+	}
+	
+	MLLog('Including file: ' + filePath, 'cyan');
+
+	var sourceCode = getFileContents(filePath);
+	
+	if (!sourceCode && sourceCode !== '') {
+		MLLog('File not found: ' + filePath, 'red');
+		return '';
+	}
+
+	var fileExtension = filePath.replace(/.*[\.\/]/, '').toLowerCase();
+	var fileType = supportedFileTypes[fileExtension];
+
+	switch (fileType) {
+
+		case 'script':
+			try {
+				var tmpCode = sourceCode.replace(exp, '');
+
+				jsp.parse(tmpCode);
+
+			} catch (e) {
+				die('BuildError: ' + e.message + " (line: " + e.line + ", col: " + e.col + ", pos: " + e.pos + ")" + "\n\n" + e.stack);
+			}
+
+			break;
+
+		case 'template':
+			var name = filePath.match(/([^\/]+)(?=\.\w+$)/)[0];
+		
+			sourceCode = 'MLTemplates[\''+name+'\'] = \'' + escape(sourceCode).replace(/\n/g, '\\\n') + '\';';
+
+			break;
+
+		default:
+			break;
+	}
+			
+	include.cache[resolvedPath] = sourceCode;
+
+	if (include.filesToWatch.indexOf(filePath) === -1) {
+		include.filesToWatch.push(filePath);
+	}
+
+	var preprocessedCode = sourceCode.replace(exp, function (match, filePath) {
+		if ( !match.match(/\s*\/\//)) {
+			return include(currentDir + filePath);
+		}
+		
+		return match;
+	});
+	
+	return preprocessedCode;
+}
+
+include.cache = {};
+
+function main() {
+
+	var args = slice(process.argv, 2);
+
+	while (args.length > 0) {
+		var v = args.shift();
+		
+		switch (v) {
+			case '-m':
+			case '--minify':
+				options.minify = true;
+				break;
+			case '-w':
+			case '--watch':
+				options.watch = true;
+				break;
+			case '-v':
+			case '--verbose':
+				options.verbose = true;
+				break;
+			case '-o':
+			case '--output':
+				options.outputFilePath
+				break;
+			case '-c':
+			case '--config':
+				options.configFilePath = args.shift();
+				break;
+			case '--debug':
+				options.debug = true;
+				break;
+			case '-d':
+			case '--document':
+				options.document = true;
+				break;
+			case '-h':
+			case '--help':
+				showHelp();
+				return;
+			default:
+				if (v.indexOf('-') == 0) {
+
+					if (v === '--uglify') {
+						die('Unrecognized flag: ' + v + ', did you mean --minify?');
+					}
+
+					die('Unrecognized flag: ' + v);
+				}
+
+				options.outputFilePath = args.shift();
+		}
+	}
+
+
+	var configJSON = getFileContents(options.configFilePath);
+
+	if (!configJSON) {
+		die('configuration file not found: ' + options.configFilePath);
+	}
+
+	try {
+		options.config = JSON.parse(configJSON)
+	} catch (e) {
+		die('Parse error in configuration file: ' + options.configFilePath);
+	}
+
+	options.debug = (/^true|1$/i).test(options.config.debug);
+	options.outputFilePath = options.config.output;
+	options.splashTemplate = options.config.splashTemplate;
+	options.splashOutput = options.config.splashOutput;
+
+	include.filesToWatch = [];
+
+	try {
+		exec('cd public && cp -apv . ../build', function () {
+			build();
+			watch();
+		});	
+	} catch (e) {
+		die(e)
+	}
+}
+
+function watch() {
+	if (options.watch) {
+		
+		console.log('--------');
+
+		var filesToWatch = include.filesToWatch;
+
+		for (var i = 0, l = filesToWatch.length; i < l; i++) {
+			// Create closure to keep fileName local
+			// to this watchFileHandler
+			(function () {
+				
+				var fileName = filesToWatch[i];
+				
+				var watchFileHandler = function (curr, prev) {
+					if (+curr.mtime !== +prev.mtime) {
+						console.log('--------');
+						MLLog('Change detected to ' + fileName, 'yellow');
+
+						build();
+					}
+				}
+
+				fs.watchFile(fileName, watchFileHandler);
+
+				MLLog('Watching ' + fileName, 'grey');
+
+			})();
+		}
+	}
+}
+
+var supportedFileTypes = {
+	'js': 'script',
+	'css': 'style',
+	'html': 'template'
+};
+
+function buildPackageScripts(packageName, currentPackage) {
+	var preprocessedCode = '';
+	var compiledCode;
+
+	for (var i = 0, l = currentPackage.length; i < l; i++) {
+		var currentFile = currentPackage[i];
+		
+		preprocessedCode += include(currentFile, 'script');
+	}
+	
+	if (options.minify) {
+		MLLog('Minifying: ' + packageName, 'yellow');
+		
+		try {
+			compiledCode = uglify(preprocessedCode);
+		} catch (e) {
+			die('BuildError: ' + e.message + " (line: " + e.line + ", col: " + e.col + ", pos: " + e.pos + ")" + "\n\n" + e.stack);
+		}
+
+	} else {
+		compiledCode = preprocessedCode;
+	}
+
+	return compiledCode;
+}
+
+function replaceCSSUrl(url, mimeType) {
+    var fullPath = options.outputFilePath + url;
+    var imageBuffer = getFileContents(fullPath, null);
+
+    if (!imageBuffer) {
+    	die('CSS url() reference: ' + fullPath + ' not found.');
+    }
+
+    var base64Image = new Buffer(imageBuffer, 'binary').toString('base64');
+
+    return 'url(data:' + mimeType + ';base64,' + base64Image + ')';
+}
+
+function buildPackageStyleSheets(packageName, currentPackage) {
+	var preprocessedCode = '';
+	var compiledCode;
+
+	for (var i = 0, l = currentPackage.length; i < l; i++) {
+		var currentFile = currentPackage[i];
+		
+		preprocessedCode += include(currentFile, 'style');
+	}
+	
+	if (options.base64EncodeCSSImages) {
+		preprocessedCode = preprocessedCode.replace(/url\('?(\S+\.(png|jpg|jpeg))'?\)/gi, function (match, url, extension) {
+		    return replaceCSSUrl(url, 'image/'+extension);
+		});
+	}
+
+	if (options.minify) {
+		MLLog('Minifying: ' + packageName, 'yellow');
+		
+		try {
+			compiledCode = cleanCSS.process(preprocessedCode);
+		} catch (e) {
+			//die('BuildError: ' + e.message + " (line: " + e.line + ", col: " + e.col + ", pos: " + e.pos + ")" + "\n\n" + e.stack);
+			die(e);
+		}
+
+	} else {
+		compiledCode = preprocessedCode;
+	}
+
+	return compiledCode;
+}
+
+function buildPackageTemplates(packageName, currentPackage) {
+	var packageObj = {};
+
+	for (var i = 0, l = currentPackage.length; i < l; i++) {
+		var currentFile = currentPackage[i];
+
+		var name = currentFile.match(/([^\/]+)(?=\.\w+$)/)[0];
+		
+		packageObj[name] = getFileContents(currentFile);
+	}
+
+	die(packageObj);
+
+	return packageObj;
+}
+
+function build() {
+
+	var finalManifest = {};
+	finalManifest.totalPackagesSize = 0;
+	var buildTimestamp = (new Date()).getTime();
+
+	include.cache = {};
+
+	var packages = options.config.packages;
+	var manifestPackages = [];
+
+	for (var outputFilePath in packages) {
+		var name = outputFilePath.match(/([^\/]+)(?=\.\w+$)/)[0];
+
+		var currentPackage = packages[outputFilePath];
+		
+		var compiledCode;
+
+		var fileExtension = outputFilePath.replace(/.*[\.\/]/, '').toLowerCase();
+		var fileType = supportedFileTypes[fileExtension];
+
+		switch (fileType) {
+			case 'script':
+				compiledCode = buildPackageScripts(outputFilePath, currentPackage);
+				break;
+			case 'style':
+				compiledCode = buildPackageStyleSheets(outputFilePath, currentPackage);
+				break;
+			default:
+				die('unsupported file type: ' + fileExtension);
+		}
+
+		var checksum = crc32(compiledCode);
+
+		manifestPackages.push({
+			name: name,
+			src: outputFilePath,
+			build: buildTimestamp.toString(),
+			checksum: checksum.toString(),
+			type: fileType
+		});
+
+		outputFilePath = options.outputFilePath + outputFilePath;
+		
+		MLLog('Writing ' + outputFilePath, 'magenta');
+
+		var err = fs.writeFileSync(outputFilePath, compiledCode);
+
+		finalManifest.totalPackagesSize += getFileSize(outputFilePath);
+
+		if (err) {
+			die(err);
+		}
+	}
+
+	var manifestOutputPath = options.outputFilePath + 'manifest.json';
+
+	MLLog('Writing package manifest to: ' + manifestOutputPath, 'magenta');
+
+	finalManifest.packages = manifestPackages;
+
+	var manifestString = JSON.stringify(finalManifest);
+
+	if (options.splashTemplate) {
+		var splashTemplate = getFileContents(options.splashTemplate);
+		
+		if (!splashTemplate) {
+			// Couldn't find template
+			MLLog('HTML Template not found: ' + options.splashTemplate, 'red');
+
+		} else {
+			// Generate index page from template
+			var htmlString = doT.template(splashTemplate)({
+				manifest: manifestString,
+				bootloader: '',
+				debug: options.debug
+			});	
+
+			var indexOutputPath = options.outputFilePath + options.splashOutput + '/bootloader.html';
+
+			// Save our bootloader.html
+			var err = fs.writeFileSync(indexOutputPath, htmlString);
+
+			if (err) {
+				die(err);
+			}
+		}
+	}
+
+	MLLog('Build complete.', 'green');
+
+	if (options.document) {
+
+		if (options.minify) {
+			die('Sorry, you can\'t yet generate documentation and minify. Soon maybe?');
+		}
+
+		MLLog('Generating Documentation', 'magenta');
+		exec('tools/jsdoc-toolkit/app/run.js -t=tools/jsdoc-toolkit/templates/jsdoc -d=doc src/js/ libs/MLKit/src/ -r --private', function (error, stdout, stderr) {
+			
+			MLLog('\nJSDoc stdout:' + stdout, 'yellow');
+				MLLog('\nJSDoc stderr: \n' + stderr, 'yellow');
+
+			if (error !== null) {
+				console.log('exec error: ' + error);
+			}
+		});
+	}
+}
+
+// Run
+main();
