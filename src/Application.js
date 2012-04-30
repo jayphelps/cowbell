@@ -1,73 +1,73 @@
 (function (window, document) {
 
-	/**
-	 * FIXME: Description needed.
-	 *
-	 * @class		
-	 * @author		Jay Phelps
-	 * @since		0.1
-	 */
-	var Application = ML.Class.create({
+    /**
+     * FIXME: Description needed.
+     *
+     * @class       
+     * @author      Jay Phelps
+     * @since       0.1
+     */
+    var Application = ML.Class.create({
 
-		keyWindow: window,
-		windows: null,
+        keyWindow: window,
+        windows: null,
 
-		__constructor: function () { 
-			if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
-			
-			this.windows = [];
-			Application.sharedApplication = this;
-		},
+        __constructor: function () { 
+            if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
+            
+            this.windows = [];
+            Application.sharedApplication = this;
+        },
 
-		initWithDelegate: function (delegateInstance) {
-			this.delegateInstance = delegateInstance;
-			return this;
-		}
+        initWithDelegate: function (delegateInstance) {
+            this.delegateInstance = delegateInstance;
+            return this;
+        }
 
-	});
+    });
 
-	Application.sharedApplication = null;
+    Application.sharedApplication = null;
 
-	ML.Application = Application;
+    ML.Application = Application;
 
-	/**
-	 * FIXME: Description needed.
-	 *
-	 * @function		
-	 * @extends		MLControlView
-	 * @author		Jay Phelps
-	 * @since		0.1
-	 */
-	var startApplication = function (appNamespace, appDelegateName) {
-		appNamespace = appNamespace || window;
+    /**
+     * FIXME: Description needed.
+     *
+     * @function        
+     * @extends     MLControlView
+     * @author      Jay Phelps
+     * @since       0.1
+     */
+    var startApplication = function (appNamespace, appDelegateName) {
+        appNamespace = appNamespace || window;
 
-		var delegate = appNamespace[appDelegateName];
+        var delegate = appNamespace[appDelegateName];
 
-		if (!delegate.isClass || !ML.isFunction(delegate)) throw Error("Delegate is not a class");
+        if (!delegate.isClass || !ML.isFunction(delegate)) throw Error("Delegate is not a class");
 
-		var delegateInstance = new delegate();
+        var delegateInstance = new delegate();
 
-		var application = (new ML.Application).initWithDelegate(delegateInstance);
-		
-		var keyWindow = application.keyWindow;
-		
-		delegateInstance.window = keyWindow;
+        var application = (new ML.Application).initWithDelegate(delegateInstance);
+        
+        var keyWindow = application.keyWindow;
+        
+        delegateInstance.window = keyWindow;
 
-		var applicationDidFinishLaunching = ML.bind(
-			delegateInstance.applicationDidFinishLaunching,
-			delegateInstance,
-			application
-		);
+        var applicationDidFinishLaunching = ML.bind(
+            delegateInstance.applicationDidFinishLaunching,
+            delegateInstance,
+            application
+        );
 
-		ML.DOM.onReady(function () {
-			// Clear the body so it"s clean slate for the app
-			document.body.innerHTML = "";
-			
-			// Notify app they are ready
-			applicationDidFinishLaunching();
-		});
-	}
+        ML.DOM.onReady(function () {
+            // Clear the body so it"s clean slate for the app
+            document.body.innerHTML = "";
+            
+            // Notify app they are ready
+            applicationDidFinishLaunching();
+        });
+    }
 
-	ML.startApplication = startApplication;
+    ML.startApplication = startApplication;
 
 })(window, document);

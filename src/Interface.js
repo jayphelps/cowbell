@@ -1,16 +1,16 @@
 (function () {
 
-	var Interface = ML.Object.create({
+    var Interface = ML.Object.create({
 
-		create: function (instanceMembers, staticMembers) {
-			return {
+        create: function (instanceMembers, staticMembers) {
+            return {
                 instanceMembers: instanceMembers,
                 staticMembers: staticMembers
             };
-		}
+        }
 
-	});
-	
-	ML.Interface = Interface;
+    });
+    
+    ML.Interface = Interface;
 
 })();
