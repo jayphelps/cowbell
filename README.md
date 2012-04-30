@@ -19,7 +19,7 @@ These classes still need to be cleaned up:
   - TemplateView
   - etc
 
-ML.View is also missing a majority of it's helper methods.
+ML.View is also missing a majority of the helper methods.
 
 A previous version is in use at [SignNow](https://signnow.com)
 
