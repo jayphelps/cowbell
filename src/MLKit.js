@@ -53,8 +53,12 @@ window.ML = window.ML || {};
     // prevent a console.log from blowing things up if we are on a browser that
     // does not support it
     if (typeof console === "undefined") {
-        window.console = {} ;
-        console.log = console.dir = console.info = console.warn = console.error = function () {};
+        window.console = {}
+
+        console.debug = console.dir = console.error = console.groupCollapsed =
+        console.groupEnd = console.info = console.log = console.time =
+        console.timeEnd = console.trace = console.warn = console.assert = 
+        console.profile = function () {};
     }
 
     window.YES = true;
