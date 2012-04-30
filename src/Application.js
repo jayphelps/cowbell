@@ -9,13 +9,15 @@
      */
     var Application = ML.Class.create({
 
-        keyWindow: window,
+        keyWindow: null,
         windows: null,
 
-        __constructor: function () { 
+        __constructor: function () {
             if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
             
+            this.keyWindow = new ML.Window();
             this.windows = [];
+
             Application.sharedApplication = this;
         },
 
@@ -49,9 +51,7 @@
 
         var application = (new ML.Application).initWithDelegate(delegateInstance);
         
-        var keyWindow = application.keyWindow;
-        
-        delegateInstance.window = keyWindow;
+        delegateInstance.window = application.keyWindow;
 
         var applicationDidFinishLaunching = ML.bind(
             delegateInstance.applicationDidFinishLaunching,
