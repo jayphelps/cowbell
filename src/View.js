@@ -226,6 +226,10 @@ MLImport("Class.js");
      */
     var ViewMembers = /** @lends ML.View# */ {
 
+        // =====================================================================
+        // instance properties
+        // =====================================================================
+
         /**
          * Determines what HTML element the layer should be.
          * 
@@ -256,6 +260,10 @@ MLImport("Class.js");
          */
         isRendered: NO,
 
+        // =====================================================================
+        // layer + getter/setter
+        // =====================================================================
+
         /**
          * @property
          * @default     null
@@ -271,6 +279,10 @@ MLImport("Class.js");
         __getLayer: function () {
             return this.layer || this.render();
         },
+
+        // =====================================================================
+        // innerText + getter/setter
+        // =====================================================================
 
         /**
          * @property
@@ -316,6 +328,78 @@ MLImport("Class.js");
             });
         },
 
+        // =====================================================================
+        // width + getter/setter
+        // =====================================================================
+
+        width: 0,
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        __getWidth: function (hard) {
+            // If they want a hard refresh or if the width is falsey we're
+            // going to check the real layer to confirm it's true value
+            if (!this.width || hard) {
+                var layer = this.layer;
+                if (layer) {
+                    return parseInt(layer.clientWidth, 10);
+                }
+            }
+
+            return this.width;
+        },
+
+        // =====================================================================
+        // style + getter/setter
+        // =====================================================================
+
+        style: null,
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        __setStyle: function (key, value) {
+            // Prevents exceptions in strange IE circumstances with bad args
+            if (!key || typeof value === 'undefined') {
+                return false;
+            }
+
+            this.style[key] = value;
+
+            this.whenRendered(function () {
+                return (this.layer.style[key] = value);
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        __getStyle: function (key, hard) {
+            var value = this.style[key];
+
+            // If a style request turned up undefined or they want a hard refresh
+            // we'll actually check out the real style on the layer
+            if (typeof value === "undefined" || hard) {
+                var layer = this.layer;
+                if (layer) {
+                    return this.layer.style[key];
+                }
+            }
+
+            return value;
+        },
+
+        // =====================================================================
+        // constructor
+        // =====================================================================
+
         /**
          * No documentation available yet.
          * 
@@ -324,6 +408,7 @@ MLImport("Class.js");
         __constructor: function (layer) {
             this.layer = layer || null;
             this.childViews = this.childViews || [];
+            this.style = this.style || {};
 
             var classListTmp = new ClassList("ML-View");
 
@@ -339,6 +424,10 @@ MLImport("Class.js");
 
             this.classList = classListTmp;
         },
+
+        // =====================================================================
+        // instance methods
+        // =====================================================================
 
         /**
          * No documentation available yet.
@@ -402,6 +491,123 @@ MLImport("Class.js");
                 this.layer.appendChild(childView.getLayer());
             });
         },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        insertChildBeforeChild: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        insertChildAfterChild: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        insertChildAtIndex: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        removeChild: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        removeChildAtIndex: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        removeChildren: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        reverseChildren: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        replaceChildWithChild: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        replaceChildrenWithChild: function () {
+            this.whenRendered(function () {
+
+            });
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        hasChildren: function () {
+            return !!this.childViews.length;
+        },
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        getFirstChild: function () {
+            return this.childView[0];
+        },
         
         /**
          * No documentation available yet.
@@ -428,6 +634,10 @@ MLImport("Class.js");
     };
 
     var notificationMembers = [
+
+        // =====================================================================
+        // instance methods (implemented below)
+        // =====================================================================
 
         /**
          * No documentation available yet.
