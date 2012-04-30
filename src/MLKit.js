@@ -1,8 +1,13 @@
 /**
- * WARNING: MLKit opts into "strict mode". Any script included inside of here
- * has those rules applied, including files we MLImport()!
+ * MLKit
+ * (c) 2012 Jay Phelps
+ * MIT licensed
+ * https://github.com/jayphelps/MLKit
  */
+
 (function (window, document) {
+    // WARNING: MLKit opts into "strict mode". Any script included inside of here
+    // has those rules applied, including files we MLImport()!
     "use strict";
 
     // prevent a console.log from blowing things up if we are on a browser that
