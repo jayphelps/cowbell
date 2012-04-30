@@ -9,7 +9,7 @@ window.ML = window.ML || {};
 // the stashed version back.
 (function (window, document) {
 
-    var libs = ["_", "Sizzle"];
+    var libs = ["_"];
     var stash = {};
 
     for (var i = 0, l = libs.length; i < l; i++) {
@@ -17,11 +17,9 @@ window.ML = window.ML || {};
         stash[libName] = window[libName];
     }
 
-    MLImport("../lib/sizzle.js");
     MLImport("../lib/underscore.js");
 
     _.extend(ML, window._);
-    ML.$ = window.Sizzle;
 
     for (var i = 0, l = libs.length; i < l; i++) {
         var libName = libs[i];
