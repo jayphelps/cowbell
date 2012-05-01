@@ -494,7 +494,6 @@ MLImport("Class.js");
             childView.nextResponder = this;
 
             this.whenRendered(function () {
-                console.log('goos')
                 this.layer.appendChild(childView.getLayer());
             });
         },
