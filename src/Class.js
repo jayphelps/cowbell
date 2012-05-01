@@ -77,7 +77,6 @@
         addObserver: function (key, observer) {
             var observersKey = "__" + key + "Observers";
             var observers = this[observersKey] || (this[observersKey] = []);
-
             observers.push(observer);
         },
 
@@ -93,8 +92,8 @@
             if (observers) {
                 var index = ML.indexOf(observers, observer);
 
-                if (index) {
-                    return observers.splice(index);
+                if (index > -1) {
+                    return observers.splice(index, 1);
                 }
             }
 
@@ -124,9 +123,17 @@
 
             // If an observers storage array exists on this instance, we'll
             // then notify each one of them of the change
-            observers && ML.forEach(observers, function (observer) {
-                observer.call(controller, value);
-            });
+            if (observers) {
+                // IMPORTANT: We need to clone the observers array for a bit
+                // because it's possible for the observers to remove themselves
+                // which would cause issues if we just normally looped through
+                // them (array length would change and we'd be off as well)
+                var observersClone = ML.clone(observers);
+
+                for (var i = 0; i < observersClone.length; i++) {
+                    observersClone[i].call(controller, value);
+                }
+            }
         },
 
         /**

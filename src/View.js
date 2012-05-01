@@ -492,8 +492,9 @@ MLImport("Class.js");
             
             childView.parentView = this;
             childView.nextResponder = this;
-            
+
             this.whenRendered(function () {
+                console.log('goos')
                 this.layer.appendChild(childView.getLayer());
             });
         },
@@ -536,10 +537,14 @@ MLImport("Class.js");
          * 
          * @return  {void}
          */
-        removeChild: function () {
-            this.whenRendered(function () {
-
-            });
+        removeChild: function (childView) {
+            var index = ML.indexOf(this.childViews, childView);
+            
+            if ( index > -1 && index <= this.childViews.length) {   
+                return this.removeChildAtIndex(index);
+            }
+            
+            return false; 
         },
 
         /**
@@ -547,10 +552,28 @@ MLImport("Class.js");
          * 
          * @return  {void}
          */
-        removeChildAtIndex: function () {
-            this.whenRendered(function () {
+        removeChildAtIndex: function (index) {
+            if ( index > -1 && index <= this.childViews.length) {
+                                    
+                var childView = this.childViews[index];
+                
+                if (!childView) return false;
 
-            });
+                this.childViews.splice(index, 1);
+                
+                childView.parentView = null;
+                childView.nextResponder = null;
+                delete childView.nextResponder;
+                delete childView.parentView;
+
+                this.whenRendered(function () {
+                    this.layer.removeChild(childView.getLayer());
+                });
+                
+                return childView;
+            }
+            
+            return false;
         },
 
         /**
