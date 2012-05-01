@@ -1,9 +1,10 @@
 /**
  * Include this file so you can work on MLKit itself without having to rebuild
  * it or have it watch your files, for example, if you don't have node.js.
- * Be warned, I haven't tested this much, and there are likely differences in
- * context/scope between the real MLImport preprocess directive we use to build
- * the final framework with merc!
+ * 
+ * WARNING: This script currently does not import the script into the same scope
+ * of where it was called so any imported code that relies on such will not work
+ * as expected. All distributes of MLKit should use the merc build tool instead.
  */
 function MLImport(filePath) {
     var scripts = document.getElementsByTagName("script");
