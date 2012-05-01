@@ -3,7 +3,10 @@
     // Since we don't know what order MLKit will be included we have to be
     // sure we don't clobber a previously included version of underscore.
     // To solve, we simply stash the existing version and reassign it after.
-
+    // Underscore has a noConflict() helper, however, if there isn't actually
+    // a conflict it keeps itself in the global namespace. We may eventually
+    // remove underscore or fork it directly into MLKit so we don't want any
+    // one to depend on it existing.
     var stashedUnderscore = window._;
 
     MLImport("../lib/underscore.js");

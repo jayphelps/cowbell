@@ -26,7 +26,7 @@ function MLImport(filePath) {
     // Check for 200 status for HTTP, but also catch if responseText
     // contains anything for local file:// access that return zero status
     if (request.status !== 200 && !request.responseText) {  
-       throw new Error('Importing file failed: ' + filePath + ' with status code: ' + request.status);
+       throw new Error("Importing file failed: " + filePath + " with status code: " + request.status);
     }
 
     var source = request.responseText;
