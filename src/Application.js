@@ -12,7 +12,7 @@
         keyWindow: null,
         windows: null,
 
-        __constructor: function () {
+        __construct: function () {
             if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
             
             this.keyWindow = new ML.Window();

@@ -56,7 +56,7 @@
     }
 
     // Used during the inheritance process to prevent the class definition
-    // __constructor's from being called
+    // __construct's from being called
     var classIsInitializing = false;
 
     /**
@@ -308,14 +308,14 @@
         }
 
         // Instantiate a base class but only create the instance,
-        // don't run the __constructor
+        // don't run the __construct
         classIsInitializing = true;
         var prototype = new superClass() || {};
         classIsInitializing = false;
 
-        // If they didn't provide a __constructor we need to give it a dummy
+        // If they didn't provide a __construct we need to give it a dummy
         // one so we don't double run super constructors because of inheritance
-        prototype.__constructor = instanceMembers.__constructor || function () {};
+        prototype.__construct = instanceMembers.__construct || function () {};
 
         // Pass a reference to the super class implementations
         prototype.super = superClass.prototype;
@@ -324,7 +324,7 @@
         // call super constructors
         function Class() {
             // Allows us to create an instance of superClass above without
-            // actually calling the class's real __constructor
+            // actually calling the class's real __construct
             if (classIsInitializing) return;
 
             // @TODO I'm sure there's a better way of calling the constructors
@@ -332,15 +332,15 @@
             var constructors = [];
 
             // Push the main constructor in first
-            if (this.__constructor) {  
-                constructors.push(this.__constructor);
+            if (this.__construct) {  
+                constructors.push(this.__construct);
             }
 
             var superDuper = this.super;
 
             // Walk the super class chain pushing the constructors in the stack
-            while (superDuper && superDuper.__constructor) {
-                constructors.push(superDuper.__constructor);
+            while (superDuper && superDuper.__construct) {
+                constructors.push(superDuper.__construct);
                 superDuper = superDuper.super;
             }   
 

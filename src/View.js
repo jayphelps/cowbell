@@ -409,7 +409,7 @@ MLImport("Class.js");
          * 
          * @return  {void}
          */
-        __constructor: function (layer) {
+        __construct: function (layer) {
             this.layer = layer || null;
             this.childViews = this.childViews || [];
             this.style = this.style || {};
@@ -442,11 +442,9 @@ MLImport("Class.js");
             // Allow pre-hooks before render
             this.willRender();
 
-            // Create our layer HTML element=
-            this.layer = document.createElement(this.tagName);
-
             if (!this.layer) {
-                throw Error("Failed to render view. Layer value: " + this.layer);
+                // Create our layer as an HTML element
+                this.layer = document.createElement(this.tagName);
             }
 
             this.setIsRendered(YES);
