@@ -13,6 +13,9 @@
             for (var i = 0, l = callbacks.length; i < l; i++) {
                 callbacks[i]();
             }
+
+            // Clear callbacks array to prevent leakage
+            callbacks.length = 0;
         },
 
         onReady: function (fn) {
