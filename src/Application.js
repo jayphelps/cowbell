@@ -40,12 +40,11 @@ MLImport("Pane.js");
      * @author      Jay Phelps
      * @since       0.1
      */
-    var startApplication = function (appNamespace, appDelegateName) {
-        appNamespace = appNamespace || window;
+    var startApplication = function (options) {
+        var appNamespace = (options.namespace && window[options.namespace]) || window;
+        var delegate = appNamespace[options.delegate];
 
-        var delegate = appNamespace[appDelegateName];
-
-        if (!delegate.isClass || !ML.isFunction(delegate)) throw Error("Delegate is not a class");
+        if (!delegate || !delegate.isClass || !ML.isFunction(delegate)) throw Error("Application Delegate missing or not a class");
 
         var delegateInstance = new delegate();
 
