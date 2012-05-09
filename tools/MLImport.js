@@ -9,7 +9,7 @@
 function MLImport(filePath) {
     var scripts = document.getElementsByTagName("script");
     var currentScript = scripts[scripts.length-1].src.split("?")[0];
-    var currentPath = currentScript.split("/").slice(0, -1).join("/") + "/";
+    var currentPath = MLImport.currentPath ||  currentScript.split("/").slice(0, -1).join("/") + "/";
 
     var fullPath = currentPath + filePath;
 
@@ -31,6 +31,9 @@ function MLImport(filePath) {
 
     var source = request.responseText;
 
+    var oldPath = MLImport.currentPath;
+    MLImport.currentPath = fullPath.split("/").slice(0, -1).join("/") + "/";
+
     try {
         // So we eval in the global context
         eval.call(window, source);
@@ -49,6 +52,8 @@ function MLImport(filePath) {
         e.sourceURL = fullPath;
         throw e;
     }
+
+    MLImport.currentPath = oldPath;
 
     MLImport[fullPath] = true;
 

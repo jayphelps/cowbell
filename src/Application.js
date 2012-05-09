@@ -40,9 +40,16 @@ MLImport("Pane.js");
             ML.DOM.onReady(function () {
                 var delegateClass = application[application.delegateName];
 
-                if (!delegateClass || !delegateClass.isClass || !ML.isFunction(delegateClass)) throw Error("Application Delegate missing or not a class");
+                if (!delegateClass || !delegateClass.isClass) {
+                    throw Error("Application Delegate missing or not a class");
+                }
 
                 var delegate = new delegateClass();
+
+                if ( !(delegate instanceof ML.ApplicationDelegate) ) {
+                    throw Error("Application Delegate must inherit ML.ApplicationDelegate");
+                }
+
                 application.delegate = delegate;
                 
                 // Clear the body so it"s clean slate for the app
