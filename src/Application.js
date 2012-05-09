@@ -20,7 +20,7 @@ MLImport("Pane.js");
         delegate: null,
         panes: [],
 
-        __construct: function (applicationObject) {
+        __construct: function () {
             if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
 
             Application.sharedApplication = this;
@@ -38,7 +38,6 @@ MLImport("Pane.js");
             ML.RootResponder.setup();
 
             ML.DOM.onReady(function () {
-                console.log(application)
                 var delegateClass = application[application.delegateName];
 
                 if (!delegateClass || !delegateClass.isClass || !ML.isFunction(delegateClass)) throw Error("Application Delegate missing or not a class");
