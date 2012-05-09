@@ -10,7 +10,7 @@ Todos.ApplicationDelegate = ML.Class.create({
 
 }, /** @lends Todos.ApplicationDelegate# */ {
 
-    applicationDidFinishLaunching:  function (application) {
+    applicationDidFinishLaunching: function (application) {
         var mainPane = new ML.Pane();
         var controller = new Todos.ListViewController();
 
