@@ -1,4 +1,4 @@
-(function (window, document) {
+(function (ML, window, document) {
 
     // Since we don't know what order MLKit will be included we have to be
     // sure we don't clobber a previously included version of underscore.
@@ -27,15 +27,48 @@
         }
     }
 
-    // To preserve memory, this dummy function is used internally as a safe
-    // placeholder for method implementations that do nothing.
-    ML.dummyFunction = function () {};
+    // String helpers
+    MLImport("utilities/string.js");
 
-    ML.upperCaseFirst = function (string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    // Function helpers
+    MLImport("utilities/function.js"); 
+
+    // Data storage
+    MLImport("utilities/data.js");
+
+    ML.implementsInterface = function (obj, protocol) {
+        for (var key in protocol) {
+            var imp = obj[key];
+
+            if (typeof imp === "undefined") return false;
+
+            var impConstructor = imp && imp.constructor;
+            var protocolConstructor = protocol[key];
+
+            if (impConstructor !== protocolConstructor) return false;
+        }
+
+        return true;
+    };
+
+    ML.hashFor = function () {
+        var h = "";
+        var obj;
+        var f;
+
+        for (var i = 0, l = arguments.length; i < l; i++) {
+            obj = arguments[i];
+            h += (obj && (f = obj.hash) && ( ML.isFunction(f) )) ? f.call(obj) : this.uniqueId(obj);
+        }
+
+        return h === "" ? null : h;
+    };
+
+    ML.none = function(obj) {
+        return obj == null;
     };
 
 // Because underscore.js assigns itself to "this._" instead of "window._"
 // we need to apply the window context because all of MLKit is in running in
 // strict mode which causes "this" to be undefined in otherwise implied globals
-}).call(window, window, document);
+}).call(window, ML, window, document);

@@ -1,4 +1,5 @@
 MLImport("Class.js");
+MLImport("Responder.js");
 
 (function (window, document) {
 
@@ -231,6 +232,24 @@ MLImport("Class.js");
         // =====================================================================
 
         /**
+         * For duck typing
+         * 
+         * @property
+         * @default     YES
+         * @type        Boolean
+         */
+        isView: YES,
+
+        /**
+         * If the view is attached to the DOM
+         * 
+         * @property
+         * @default     NO
+         * @type        Boolean
+         */
+        isAttached: NO,
+
+        /**
          * Determines what HTML element the layer should be.
          * 
          * @property
@@ -419,6 +438,10 @@ MLImport("Class.js");
             // classList need a reference to the view so they can update the
             // layer.className property
             classListTmp._view = this;
+
+            if ( this.name && ML.isString(this.name) ) {
+                classListTmp.add(this.name);
+            }
 
             // If class names were already provided during definition we'll
             // auto-add them first.
@@ -767,6 +790,6 @@ MLImport("Class.js");
         };
     });
 
-    ML.View = ML.Class.create(ViewMembers);
+    ML.View = ML.Class.create({ extend: ML.Responder }, ViewMembers);
 
 })(window, document);

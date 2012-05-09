@@ -1,3 +1,7 @@
+MLImport("Class.js");
+MLImport("RootResponder.js");
+MLImport("Pane.js");
+
 (function (window, document) {
 
     /**
@@ -9,15 +13,12 @@
      */
     var Application = ML.Class.create({
 
-        keyWindow: null,
-        windows: null,
+        keyPane: null,
+        mainPane: null,
+        panes: [],
 
         __construct: function () {
             if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
-            
-            this.keyWindow = new ML.Window();
-            this.windows = [];
-
             Application.sharedApplication = this;
         },
 
@@ -49,14 +50,14 @@
         var delegateInstance = new delegate();
 
         var application = (new ML.Application).initWithDelegate(delegateInstance);
-        
-        delegateInstance.window = application.keyWindow;
 
         var applicationDidFinishLaunching = ML.bind(
             delegateInstance.applicationDidFinishLaunching,
             delegateInstance,
             application
         );
+
+        ML.RootResponder.setup();
 
         ML.DOM.onReady(function () {
             // Clear the body so it"s clean slate for the app

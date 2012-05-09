@@ -7,6 +7,10 @@
  */
 ML.Responder = ML.Class.create({
 
-    nextResponder: null
+    nextResponder: null,
+
+    makeFirstResponder: function () {
+        
+    }
 
 });

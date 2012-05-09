@@ -26,7 +26,7 @@
     window.NO = false;
 
     /**
-     * Primary namespace for MLKit 
+     * Primary namespace for MLKit
      *
      * @namespace
      */
@@ -39,12 +39,23 @@
     MLImport("Class.js");
     MLImport("Object.js");
     MLImport("Interface.js");
+
+    MLImport("Event.js");
     MLImport("DOM.js");
+
+    MLImport("Responder.js");
+    MLImport("RootResponder.js");
 
     MLImport("Application.js");
     MLImport("ApplicationDelegate.js");
 
+    MLImport("ViewDelegateInterface.js");
+    
     MLImport("View.js");
+    MLImport("TemplateView.js");
+
+    MLImport("Pane.js");
+    
     MLImport("ViewController.js");
 
 })(window, document);

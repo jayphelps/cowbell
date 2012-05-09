@@ -7,7 +7,7 @@
  * @since       0.1
  */
 ML.ApplicationDelegate = ML.Class.create({
-        
+
     /**
      * No documentation available yet.
      * 
