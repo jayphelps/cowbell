@@ -147,7 +147,6 @@ var files = [];
             eval(preprocessedCode + "//@ sourceURL=" + fullPath);
             //eval("(function () { function foo() { bar } bar()})();");
         } catch (e) {
-            alert('d')
             // In some browsers (WebKit at least) syntax errors show this file
             // and the actual eval line as the error, and setting the sourceURL
             // doesn't work, so we'll generate our own generic error instead
@@ -158,7 +157,6 @@ var files = [];
                 throw err;
             }
 
-            console.log('DID IT', e)
             // This is so the correct file is shown in WebKit debuggers. Neat eh?
             e.sourceURL = fullPath;
             throw e;

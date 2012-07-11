@@ -2,7 +2,7 @@
  * Cowbell
  * (c) 2012 Jay Phelps
  * MIT licensed
- * https://github.com/jayphelps/Cowbell
+ * https://github.com/jayphelps/cowbell
  */
 
 (function (window, document) {
@@ -34,7 +34,7 @@
 
     CB.VERSION = CB.version = "0.1";
 
-    CBImport("utilities.js");
+    CBImport("utilities/utilities.js");
 
     CBImport("Class.js");
     CBImport("Object.js");

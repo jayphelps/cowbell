@@ -9,7 +9,7 @@
     // one to depend on it existing.
     var stashedUnderscore = window._;
 
-    CBImport("../lib/underscore.js");
+    CBImport("../../lib/underscore.js");
 
     _.extend(CB, window._);
 
@@ -28,13 +28,13 @@
     }
 
     // String helpers
-    CBImport("utilities/string.js");
+    CBImport("string.js");
 
     // Function helpers
-    CBImport("utilities/function.js"); 
+    CBImport("function.js"); 
 
     // Data storage
-    CBImport("utilities/data.js");
+    CBImport("data.js");
 
     CB.implementsInterface = function (obj, protocol) {
         for (var key in protocol) {
