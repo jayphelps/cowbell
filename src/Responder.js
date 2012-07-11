@@ -1,5 +1,5 @@
-MLImport("Class.js");
-MLImport("Object.js");
+CBImport("Class.js");
+CBImport("Object.js");
 
 /**
  * No documentation available yet.
@@ -8,11 +8,11 @@ MLImport("Object.js");
  * @author      Jay Phelps
  * @since       0.1
  */
-ML.Responder = ML.Class.create({
+CB.Responder = CB.Class.create({
 
-    extend: ML.Object
+    extend: CB.Object
 
-},  /** @lends ML.Responder# */ {
+},  /** @lends CB.Responder# */ {
 
     nextResponder: null,
 

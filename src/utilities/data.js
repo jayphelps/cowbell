@@ -1,4 +1,4 @@
- (function(ML, window, document) {
+ (function(CB, window, document) {
 
     var rbrace = /^(?:\{.*\}|\[.*\])$/;
     var rmultiDash = /([A-Z])/g;
@@ -6,15 +6,15 @@
     /**
      * Borrowed heavily from SproutCore for now.
      */
-    ML.extend(ML, {
+    CB.extend(CB, {
         cache: {},
 
         // Please use with caution
         uuid: 0,
 
-        // Unique for each copy of ML on the page
-        // Non-digits removed to match rinlineML
-        expando: "MLKit" + ( ML.version + Math.random() ).replace( /\D/g, "" ),
+        // Unique for each copy of CB on the page
+        // Non-digits removed to match rinlineCB
+        expando: "Cowbell" + ( CB.version + Math.random() ).replace( /\D/g, "" ),
 
         // The following elements throw uncatchable exceptions if you
         // attempt to add expando properties to them.
@@ -26,28 +26,28 @@
         },
 
         hasData: function( elem ) {
-            elem = elem.nodeType ? ML.cache[ elem[ML.expando] ] : elem[ ML.expando ];
+            elem = elem.nodeType ? CB.cache[ elem[CB.expando] ] : elem[ CB.expando ];
             return !!elem && !isEmptyDataObject( elem );
         },
 
         data: function( elem, name, data, pvt /* Internal Use Only */ ) {
-            if ( !ML.acceptData( elem ) ) {
+            if ( !CB.acceptData( elem ) ) {
                 return;
             }
 
             var privateCache;
             var thisCache;
             var ret;
-            var internalKey = ML.expando;
+            var internalKey = CB.expando;
             var getByName = typeof name === "string";
 
             // We have to handle DOM nodes and JS objects differently because IE6-7
             // can't GC object references properly across the DOM-JS boundary
             var isNode = elem.nodeType;
 
-            // Only DOM nodes need the global ML cache; JS object data is
+            // Only DOM nodes need the global CB cache; JS object data is
             // attached directly to the object so GC can occur automatically
-            var cache = isNode ? ML.cache : elem;
+            var cache = isNode ? CB.cache : elem;
 
             // Only defining an ID for JS objects if its cache already exists allows
             // the code to shortcut on the same path as a DOM node with no cache
@@ -64,7 +64,7 @@
                 // Only DOM nodes need a new unique ID for each element since their data
                 // ends up in the global cache
                 if ( isNode ) {
-                    elem[ internalKey ] = id = ++ML.uuid;
+                    elem[ internalKey ] = id = ++CB.uuid;
                 } else {
                     id = internalKey;
                 }
@@ -73,26 +73,26 @@
             if ( !cache[ id ] ) {
                 cache[ id ] = {};
 
-                // Avoids exposing ML metadata on plain JS objects when the object
+                // Avoids exposing CB metadata on plain JS objects when the object
                 // is serialized using JSON.stringify
                 if ( !isNode ) {
-                    cache[ id ].toJSON = ML.noop;
+                    cache[ id ].toJSON = CB.noop;
                 }
             }
 
-            // An object can be passed to ML.data instead of a key/value pair; this gets
+            // An object can be passed to CB.data instead of a key/value pair; this gets
             // shallow copied over onto the existing cache
             if ( typeof name === "object" || typeof name === "function" ) {
                 if ( pvt ) {
-                    cache[ id ] = ML.extend( cache[ id ], name );
+                    cache[ id ] = CB.extend( cache[ id ], name );
                 } else {
-                    cache[ id ].data = ML.extend( cache[ id ].data, name );
+                    cache[ id ].data = CB.extend( cache[ id ].data, name );
                 }
             }
 
             privateCache = thisCache = cache[ id ];
 
-            // ML data() is stored in a separate object inside the object's internal data
+            // CB data() is stored in a separate object inside the object's internal data
             // cache in order to avoid key collisions between internal data and user-defined
             // data.
             if ( !pvt ) {
@@ -104,10 +104,10 @@
             }
 
             if ( data !== undefined ) {
-                thisCache[ ML.hyphensToLowerCamelCase( name ) ] = data;
+                thisCache[ CB.hyphensToLowerCamelCase( name ) ] = data;
             }
 
-            // Users should not attempt to inspect the internal events object using ML.data,
+            // Users should not attempt to inspect the internal events object using CB.data,
             // it is undocumented and subject to change. But does anyone listen? No.
             if ( isEvents && !thisCache[ name ] ) {
                 return privateCache.events;
@@ -124,7 +124,7 @@
                 if ( ret == null ) {
 
                     // Try to find the camelCased property
-                    ret = thisCache[ ML.hyphensToLowerCamelCase( name ) ];
+                    ret = thisCache[ CB.hyphensToLowerCamelCase( name ) ];
                 }
             } else {
                 ret = thisCache;
@@ -134,21 +134,21 @@
         },
 
         removeData: function( elem, name, pvt /* Internal Use Only */ ) {
-            if ( !ML.acceptData( elem ) ) {
+            if ( !CB.acceptData( elem ) ) {
                 return;
             }
 
             var thisCache, i, l,
 
                 // Reference to internal data cache key
-                internalKey = ML.expando,
+                internalKey = CB.expando,
 
                 isNode = elem.nodeType,
 
-                // See ML.data for more information
-                cache = isNode ? ML.cache : elem,
+                // See CB.data for more information
+                cache = isNode ? CB.cache : elem,
 
-                // See ML.data for more information
+                // See CB.data for more information
                 id = isNode ? elem[ internalKey ] : internalKey;
 
             // If there is already no cache entry for this object, there is no
@@ -164,7 +164,7 @@
                 if ( thisCache ) {
 
                     // Support array or space separated string names for data keys
-                    if ( !ML.isArray( name ) ) {
+                    if ( !CB.isArray( name ) ) {
 
                         // try the string as a key before any manipulation
                         if ( name in thisCache ) {
@@ -172,7 +172,7 @@
                         } else {
 
                             // split the camel cased version by spaces unless a key with the spaces exists
-                            name = ML.hyphensToLowerCamelCase( name );
+                            name = CB.hyphensToLowerCamelCase( name );
                             if ( name in thisCache ) {
                                 name = [ name ];
                             } else {
@@ -187,13 +187,13 @@
 
                     // If there is no data left in the cache, we want to continue
                     // and let the cache object itself get destroyed
-                    if ( !( pvt ? isEmptyDataObject : ML.isEmptyObject )( thisCache ) ) {
+                    if ( !( pvt ? isEmptyDataObject : CB.isEmptyObject )( thisCache ) ) {
                         return;
                     }
                 }
             }
 
-            // See ML.data for more information
+            // See CB.data for more information
             if ( !pvt ) {
                 delete cache[ id ].data;
 
@@ -208,7 +208,7 @@
             // the window, but it will allow it on all other JS objects; other browsers
             // don't care
             // Ensure that `cache` is not a window object #10080
-            if ( ML.support.deleteExpando || !cache.setInterval ) {
+            if ( CB.support.deleteExpando || !cache.setInterval ) {
                 delete cache[ id ];
             } else {
                 cache[ id ] = null;
@@ -220,7 +220,7 @@
                 // IE does not allow us to delete expando properties from nodes,
                 // nor does it have a removeAttribute function on Document nodes;
                 // we must handle all of these cases
-                if ( ML.support.deleteExpando ) {
+                if ( CB.support.deleteExpando ) {
                     delete elem[ internalKey ];
                 } else if ( elem.removeAttribute ) {
                     elem.removeAttribute( internalKey );
@@ -232,13 +232,13 @@
 
         // For internal use only.
         _data: function( elem, name, data ) {
-            return ML.data( elem, name, data, true );
+            return CB.data( elem, name, data, true );
         },
 
         // A method for determining if a DOM node can handle the data expando
         acceptData: function( elem ) {
             if ( elem.nodeName ) {
-                var match = ML.noData[ elem.nodeName.toLowerCase() ];
+                var match = CB.noData[ elem.nodeName.toLowerCase() ];
 
                 if ( match ) {
                     return !(match === true || elem.getAttribute("classid") !== match);
@@ -251,7 +251,7 @@
 
     function dataAttr( elem, key, data ) {
         // If nothing was found internally, try to fetch any
-        // data from the HTML5 data-* attribute
+        // data from the HTCB5 data-* attribute
         if ( data === undefined && elem.nodeType === 1 ) {
 
             var name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();
@@ -263,13 +263,13 @@
                     data = data === "true" ? true :
                     data === "false" ? false :
                     data === "null" ? null :
-                    ML.isNumeric( data ) ? +data :
-                        rbrace.test( data ) ? ML.parseJSON( data ) :
+                    CB.isNumeric( data ) ? +data :
+                        rbrace.test( data ) ? CB.parseJSON( data ) :
                         data;
                 } catch( e ) {}
 
                 // Make sure we set the data so it isn't changed later
-                ML.data( elem, key, data );
+                CB.data( elem, key, data );
 
             } else {
                 data = undefined;
@@ -284,7 +284,7 @@
         for ( var name in obj ) {
 
             // if the public data object is empty, the private is still empty
-            if ( name === "data" && ML.isEmptyObject( obj[name] ) ) {
+            if ( name === "data" && CB.isEmptyObject( obj[name] ) ) {
                 continue;
             }
             if ( name !== "toJSON" ) {
@@ -295,4 +295,4 @@
         return true;
     }
 
- })(ML, window, document);
+ })(CB, window, document);

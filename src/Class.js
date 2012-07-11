@@ -1,7 +1,7 @@
 (function (window, document) {
 
     // Cached internal reference
-    var upperCaseFirst = ML.upperCaseFirst;
+    var upperCaseFirst = CB.upperCaseFirst;
 
     // Returns a function that can be used to get a property on a class instance.
     function GetterHelper(key, Key) {
@@ -90,7 +90,7 @@
             var observers = this[observersKey];
 
             if (observers) {
-                var index = ML.indexOf(observers, observer);
+                var index = CB.indexOf(observers, observer);
 
                 if (index > -1) {
                     return observers.splice(index, 1);
@@ -128,7 +128,7 @@
                 // because it's possible for the observers to remove themselves
                 // which would cause issues if we just normally looped through
                 // them (array length would change and we'd be off as well)
-                var observersClone = ML.clone(observers);
+                var observersClone = CB.clone(observers);
 
                 for (var i = 0; i < observersClone.length; i++) {
                     observersClone[i].call(controller, value);
@@ -391,6 +391,6 @@
         return Class;
     };
 
-    ML.Class = Class;
+    CB.Class = Class;
 
 })(window, document);

@@ -1,17 +1,17 @@
-(function (ML, window, document) {
+(function (CB, window, document) {
 
-    // Since we don't know what order MLKit will be included we have to be
+    // Since we don't know what order Cowbell will be included we have to be
     // sure we don't clobber a previously included version of underscore.
     // To solve, we simply stash the existing version and reassign it after.
     // Underscore has a noConflict() helper, however, if there isn't actually
     // a conflict it keeps itself in the global namespace. We may eventually
-    // remove underscore or fork it directly into MLKit so we don't want any
+    // remove underscore or fork it directly into Cowbell so we don't want any
     // one to depend on it existing.
     var stashedUnderscore = window._;
 
-    MLImport("../lib/underscore.js");
+    CBImport("../lib/underscore.js");
 
-    _.extend(ML, window._);
+    _.extend(CB, window._);
 
     // If a stashed version existed, put it back the way it was, otherwise
     // we'll get rid of the global underscore we created
@@ -28,15 +28,15 @@
     }
 
     // String helpers
-    MLImport("utilities/string.js");
+    CBImport("utilities/string.js");
 
     // Function helpers
-    MLImport("utilities/function.js"); 
+    CBImport("utilities/function.js"); 
 
     // Data storage
-    MLImport("utilities/data.js");
+    CBImport("utilities/data.js");
 
-    ML.implementsInterface = function (obj, protocol) {
+    CB.implementsInterface = function (obj, protocol) {
         for (var key in protocol) {
             var imp = obj[key];
 
@@ -51,24 +51,24 @@
         return true;
     };
 
-    ML.hashFor = function () {
+    CB.hashFor = function () {
         var h = "";
         var obj;
         var f;
 
         for (var i = 0, l = arguments.length; i < l; i++) {
             obj = arguments[i];
-            h += (obj && (f = obj.hash) && ( ML.isFunction(f) )) ? f.call(obj) : this.uniqueId(obj);
+            h += (obj && (f = obj.hash) && ( CB.isFunction(f) )) ? f.call(obj) : this.uniqueId(obj);
         }
 
         return h === "" ? null : h;
     };
 
-    ML.none = function(obj) {
+    CB.none = function(obj) {
         return obj == null;
     };
 
 // Because underscore.js assigns itself to "this._" instead of "window._"
-// we need to apply the window context because all of MLKit is in running in
+// we need to apply the window context because all of Cowbell is in running in
 // strict mode which causes "this" to be undefined in otherwise implied globals
-}).call(window, ML, window, document);
+}).call(window, CB, window, document);

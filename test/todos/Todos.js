@@ -1,13 +1,13 @@
 (function (window, document) {
 
-    MLImport("../../src/MLKit.js");
+    CBImport("../../src/cowbell.js");
 
-    var Todos = ML.Application.create();
+    var Todos = CB.Application.create();
 
-    MLImport("ListItemView.js");
-    MLImport("ListView.js");
-    MLImport("ListViewController.js");
-    MLImport("ApplicationDelegate.js");
+    CBImport("ListItemView.js");
+    CBImport("ListView.js");
+    CBImport("ListViewController.js");
+    CBImport("ApplicationDelegate.js");
 
     Todos.start();
 

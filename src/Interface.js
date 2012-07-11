@@ -1,6 +1,6 @@
 (function () {
 
-    var Interface = ML.Object.create({
+    var Interface = CB.Object.create({
 
         create: function (instanceMembers, staticMembers) {
             return {
@@ -11,6 +11,6 @@
 
     });
     
-    ML.Interface = Interface;
+    CB.Interface = Interface;
 
 })();

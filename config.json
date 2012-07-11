@@ -1,8 +1,8 @@
 {
 	"output": "build/",
 	"packages": {
-		"MLKit.js": [
-			"src/MLKit.js"
+		"cowbell.js": [
+			"src/cowbell.js"
 		]
 	}
 }

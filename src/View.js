@@ -1,5 +1,5 @@
-MLImport("Class.js");
-MLImport("Responder.js");
+CBImport("Class.js");
+CBImport("Responder.js");
 
 (function (window, document) {
 
@@ -71,7 +71,7 @@ MLImport("Responder.js");
     ClassList.prototype.has = ClassList.prototype.contains = function (token) {  
         token += "";  
     
-        return ML.indexOf(this, token) !== -1;  
+        return CB.indexOf(this, token) !== -1;  
     };
 
     /**
@@ -87,11 +87,11 @@ MLImport("Responder.js");
             return NO;
         }
 
-        if (ML.isArray(token)) {
+        if (CB.isArray(token)) {
 
             result = [];
 
-            ML.forEach(token, function (token) {
+            CB.forEach(token, function (token) {
                 var ret = classList.add(token);
                 if (ret) {
                     result.push( ret );
@@ -103,7 +103,7 @@ MLImport("Responder.js");
         
         token += "";
         
-        if (ML.indexOf(this, token) === -1) {
+        if (CB.indexOf(this, token) === -1) {
             result = this.push(token);
         }
         
@@ -119,7 +119,7 @@ MLImport("Responder.js");
         var result;
         
         token += "";
-        var index = ML.indexOf(this, token);
+        var index = CB.indexOf(this, token);
         
         if (index !== -1) {                 
             result = this.splice(index, 1);
@@ -137,7 +137,7 @@ MLImport("Responder.js");
         var result;
         token += "";
         
-        if (ML.indexOf(this, token) === -1) {
+        if (CB.indexOf(this, token) === -1) {
             result = this.add(token);
         } else {
             result = this.remove(token);
@@ -179,7 +179,7 @@ MLImport("Responder.js");
                 if (!classList.isUpdating) {
                     var layer = view.layer;
                     var className = layer.className;
-                    var isSVG = !ML.isUndefined(className.baseVal);
+                    var isSVG = !CB.isUndefined(className.baseVal);
 
                     // The first time this runs we need to merge any
                     // existing classNames off the real layer element
@@ -208,7 +208,7 @@ MLImport("Responder.js");
 
                     var newClassName = classList.join(" ");
 
-                    // Finally, change the real className of the HTML element
+                    // Finally, change the real className of the HTCB element
                     if (isSVG) {
                         layer.className.baseVal = newClassName;
                     } else {
@@ -232,12 +232,12 @@ MLImport("Responder.js");
      * Views are cooooool. Yep.
      *
      * @class
-     * @name        ML.View 
-     * @extends     ML.Responder
+     * @name        CB.View 
+     * @extends     CB.Responder
      * @author      Jay Phelps
      * @since       0.1
      */
-    var ViewMembers = /** @lends ML.View# */ {
+    var ViewMembers = /** @lends CB.View# */ {
 
         // =====================================================================
         // instance properties
@@ -262,7 +262,7 @@ MLImport("Responder.js");
         isAttached: NO,
 
         /**
-         * Determines what HTML element the layer should be.
+         * Determines what HTCB element the layer should be.
          * 
          * @property
          * @default     "div"
@@ -279,7 +279,7 @@ MLImport("Responder.js");
 
         /**
          * @property
-         * @default     ClassList with ML-View
+         * @default     ClassList with CB-View
          * @type        ClassList
          */
         classList: null,
@@ -338,12 +338,12 @@ MLImport("Responder.js");
         /**
          * @property
          * @default     null
-         * @type        ML.RenderContext
+         * @type        CB.RenderContext
          */
         renderContext: null,
 
         __getRenderContext: function () {
-            return this.renderContext || (this.renderContext = new ML.RenderContext(this.tagName));
+            return this.renderContext || (this.renderContext = new CB.RenderContext(this.tagName));
         },
 
         // =====================================================================
@@ -369,7 +369,7 @@ MLImport("Responder.js");
                     if (layer.innerText) {
                         return layer.innerText;
                     } else {
-                        var value = layer.innerHTML
+                        var value = layer.innerHTCB
                             .replace(/\&lt;br\&gt;/gi,"\n")
                             .replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
 
@@ -393,7 +393,7 @@ MLImport("Responder.js");
                 if (layer.innerText) {
                     layer.innerText = value;
                 } else {
-                    layer.innerHTML = value.replace(/(<([^>]+)>)/gi, "<$1>");
+                    layer.innerHTCB = value.replace(/(<([^>]+)>)/gi, "<$1>");
                 }
             });
         },
@@ -480,13 +480,13 @@ MLImport("Responder.js");
             this.childViews = this.childViews || [];
             this.style = this.style || {};
 
-            var classListTmp = new ClassList("ML-View");
+            var classListTmp = new ClassList("CB-View");
 
             // classList need a reference to the view so they can update the
             // layer.className property
             classListTmp._view = this;
 
-            if ( this.name && ML.isString(this.name) ) {
+            if ( this.name && CB.isString(this.name) ) {
                 classListTmp.add(this.name);
             }
 
@@ -593,7 +593,7 @@ MLImport("Responder.js");
          * @return  {void}
          */
         removeChild: function (childView) {
-            var index = ML.indexOf(this.childViews, childView);
+            var index = CB.indexOf(this.childViews, childView);
             
             if ( index > -1 && index <= this.childViews.length) {   
                 return this.removeChildAtIndex(index);
@@ -727,7 +727,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        willRender
          */
         "willRender",
@@ -736,7 +736,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        didRender
          */
         "didRender",
@@ -745,7 +745,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        willEnterDOM
          */
         "willEnterDOM",
@@ -754,7 +754,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        didEnterDOM
          */
         "didEnterDOM",
@@ -763,7 +763,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        willLeaveDOM
          */
         "willLeaveDOM",
@@ -772,7 +772,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        didLeaveDOM
          */
         "didLeaveDOM",
@@ -781,7 +781,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        willAppear
          */
         "willAppear",
@@ -790,7 +790,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        didAppear
          */
         "didAppear",
@@ -799,7 +799,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        willDisappear
          */
         "willDisappear",
@@ -808,7 +808,7 @@ MLImport("Responder.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.View
+         * @lends       CB.View
          * @name        didDisappear
          */
         "didDisappear"
@@ -817,14 +817,14 @@ MLImport("Responder.js");
     notificationMembers.forEach(function (notification) {
         ViewMembers[notification] = function () {
             // Pass the notification along if a delegate is assigned
-            if (this.delegate && this.delegate instanceof ML.ViewController) {
-                var delegateNotification = "view" + ML.upperCaseFirst(notification);
+            if (this.delegate && this.delegate instanceof CB.ViewController) {
+                var delegateNotification = "view" + CB.upperCaseFirst(notification);
                 // Notify this view's delegate of the event
                 this.delegate[delegateNotification](this);
             }
         };
     });
 
-    ML.View = ML.Class.create({ extend: ML.Responder }, ViewMembers);
+    CB.View = CB.Class.create({ extend: CB.Responder }, ViewMembers);
 
 })(window, document);

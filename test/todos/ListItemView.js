@@ -1,10 +1,10 @@
 /** 
  * @class       
- * @extends     ML.View
+ * @extends     CB.View
  * @author      Jay Phelps
  * @since       1.0
  */
-Todos.ListItemView = ML.Class.create({ extend: ML.View }, {
+Todos.ListItemView = CB.Class.create({ extend: CB.View }, {
 
     tagName: "li",
     taskName: "",

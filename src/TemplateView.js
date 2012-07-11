@@ -1,5 +1,5 @@
-MLImport("Class.js");
-MLImport("View.js");
+CBImport("Class.js");
+CBImport("View.js");
 
 (function (window, document) {
 
@@ -7,16 +7,16 @@ MLImport("View.js");
      * No documentation available yet.
      *
      * @class
-     * @name        ML.TemplateView 
-     * @extends     ML.View
+     * @name        CB.TemplateView 
+     * @extends     CB.View
      * @author      Jay Phelps
      * @since       0.1
      */
-    var TemplateView = ML.Class.create({
+    var TemplateView = CB.Class.create({
 
-        extend: ML.View
+        extend: CB.View
 
-    }, /** @lends ML.TemplateView# */ {
+    }, /** @lends CB.TemplateView# */ {
 
         __construct: function () {
             

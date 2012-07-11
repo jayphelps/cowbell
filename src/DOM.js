@@ -85,6 +85,6 @@
 
     bindDOMReady();
 
-    ML.DOM = DOM;
+    CB.DOM = DOM;
 
 })(window, document);

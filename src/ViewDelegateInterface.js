@@ -5,7 +5,7 @@
  * @author      Jay Phelps
  * @since       0.1
  */
-ML.ViewDelegateInterface = ML.Interface.create({
+CB.ViewDelegateInterface = CB.Interface.create({
 
     loadView:           Function,
     viewDidLoad:        Function,

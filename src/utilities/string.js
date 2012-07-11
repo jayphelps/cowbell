@@ -1,15 +1,15 @@
-(function (ML, window, document) {
+(function (CB, window, document) {
 
     // Make the first character upper case.
-    ML.upperCaseFirst = function (string) {
+    CB.upperCaseFirst = function (string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     };
 
-    ML.hyphensToLowerCamelCase = function (str) {
+    CB.hyphensToLowerCamelCase = function (str) {
          return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase() });
     }
 
-    ML.underscoreToLowerCamelCase = function (str) {
+    CB.underscoreToLowerCamelCase = function (str) {
         str += '';
         var ret = (str.charAt(0).toLowerCase()) + str.substr(1);
 
@@ -18,7 +18,7 @@
         });
     };
 
-    ML.isWhitespace = function (str) {
+    CB.isWhitespace = function (str) {
         if (str) {
             return (str.replace(/\s/g, '') === '');
         }
@@ -26,11 +26,11 @@
         return false;
     };
 
-    ML.removeFileExtension = function (str) {
+    CB.removeFileExtension = function (str) {
         return str.substr(0, str.lastIndexOf('.')) || str;
     };
 
-    ML.isValidEmail = function (str) {
+    CB.isValidEmail = function (str) {
         /**
          * These comments use the following terms from RFC2822:
          * local-part, domain, domain-literal and dot-atom.
@@ -91,4 +91,4 @@
         return false;
     };
 
-})(ML, window, document);
+})(CB, window, document);

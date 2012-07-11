@@ -1,12 +1,12 @@
-MLImport("Class.js");
+CBImport("Class.js");
 
 /**
  * Does nothing right now...
  * 
  * @class
- * @name    ML.Object
+ * @name    CB.Object
  */
-ML.Object = ML.Class.create({}, {
+CB.Object = CB.Class.create({}, {
 
     isObject: true,
 

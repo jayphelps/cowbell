@@ -1,5 +1,5 @@
 /**
- * Include this file so you can work on MLKit itself without having to rebuild
+ * Include this file so you can work on CBKit itself without having to rebuild
  * it or have it watch your files, for example, if you don't have node.js.
  */
 
@@ -30,12 +30,12 @@ var files = [];
         return src;
     }
 
-    function MLImport(filePath) {
+    function CBImport(filePath) {
         var pathname = window.location.pathname;
-        var currentPath = MLImport.currentPath || location.origin + pathname.substring(0, pathname.lastIndexOf('/')) + "/";
+        var currentPath = CBImport.currentPath || location.origin + pathname.substring(0, pathname.lastIndexOf('/')) + "/";
         var fullPath = currentPath + filePath;
 
-        if (MLImport[fullPath]) {
+        if (CBImport[fullPath]) {
             return '';
         }
 
@@ -66,22 +66,22 @@ var files = [];
             end: totalLineCount
         });
 
-        var oldPath = MLImport.currentPath;
-        MLImport.currentPath = fullPath.split("/").slice(0, -1).join("/") + "/";
+        var oldPath = CBImport.currentPath;
+        CBImport.currentPath = fullPath.split("/").slice(0, -1).join("/") + "/";
 
-        var exp = /.*MLImport\s*\(\s*['|"]([a-zA-Z0-9_\.\-\/]*)['|"]\s*\)\s*;?/g;
+        var exp = /.*CBImport\s*\(\s*['|"]([a-zA-Z0-9_\.\-\/]*)['|"]\s*\)\s*;?/g;
 
         var preprocessedCode = sourceCode.replace(exp, function (match, filePath) {
             if ( !match.match(/\s*\/\//) ) {
-                return MLImport(filePath);
+                return CBImport(filePath);
             }
             
             return match;
         });
 
-        MLImport.currentPath = oldPath;
+        CBImport.currentPath = oldPath;
 
-        MLImport[fullPath] = true;
+        CBImport[fullPath] = true;
 
         return preprocessedCode;
     }
@@ -102,7 +102,7 @@ var files = [];
         var err = TypeError(msg);
         console.log('adsf', err, err.stack);
 
-        err.sourceURL = "file:///Users/jayphelps/Projects/MLKit/src/" + file.path;
+        err.sourceURL = "file:///Users/jayphelps/Projects/CBKit/src/" + file.path;
         err.fileName = "http://localhost/test/todos/" + file.path;
         err.lineNumber = 346;
         err.line = 346;
@@ -113,14 +113,14 @@ var files = [];
         //throw Error("ADSF");
     }
 
-    function MLLoadApplication(filePath) {
+    function CBLoadApplication(filePath) {
         var pathname = window.location.pathname;
-        var currentPath = MLImport.currentPath || location.origin + pathname.substring(0, pathname.lastIndexOf('/')) + "/";
+        var currentPath = CBImport.currentPath || location.origin + pathname.substring(0, pathname.lastIndexOf('/')) + "/";
         var fullPath = currentPath + filePath;
 
         fucker = fullPath;
 
-        var preprocessedCode = MLImport(filePath);
+        var preprocessedCode = CBImport(filePath);
 
         // We inject a script tag with a bogus type so we can reference the
         // correct line if an exception is thrown during eval. A neat trick
@@ -153,7 +153,7 @@ var files = [];
             // doesn't work, so we'll generate our own generic error instead
             if (e.name === "SyntaxError") {
                 var err = Error(e.message);
-                err.name = "MLImport SyntaxError";
+                err.name = "CBImport SyntaxError";
                 err.sourceURL = "fuck.js";
                 throw err;
             }
@@ -165,6 +165,6 @@ var files = [];
         }
     }
 
-    window.MLLoadApplication = MLLoadApplication;
+    window.CBLoadApplication = CBLoadApplication;
 
 })(window, document);

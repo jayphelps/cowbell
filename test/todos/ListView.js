@@ -1,10 +1,10 @@
 /** 
  * @class       
- * @extends     ML.View
+ * @extends     CB.View
  * @author      Jay Phelps
  * @since       1.0
  */
-Todos.ListView = ML.Class.create({ extend: ML.View }, {
+Todos.ListView = CB.Class.create({ extend: CB.View }, {
 
     tagName: "ul",
     listItems: null,
@@ -27,7 +27,7 @@ Todos.ListView = ML.Class.create({ extend: ML.View }, {
 
     removeListItem: function (listItem) {
         var listItems = this.listItems;
-        var index = ML.indexOf(listItems, listItem);
+        var index = CB.indexOf(listItems, listItem);
         
         listItem = listItems.splice(index, 1)[0];
         console.log(listItem.view, this)

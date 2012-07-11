@@ -1,4 +1,4 @@
-MLImport("ViewDelegateInterface.js");
+CBImport("ViewDelegateInterface.js");
 
 (function (window, document) {
 
@@ -6,7 +6,7 @@ MLImport("ViewDelegateInterface.js");
      * No documentation available yet.
      *
      * @class   
-     * @name        ML.ViewController   
+     * @name        CB.ViewController   
      * @author      Jay Phelps
      * @since       0.1
      */
@@ -15,7 +15,7 @@ MLImport("ViewDelegateInterface.js");
         /**
          * @property
          * @default     null
-         * @type        ML.View
+         * @type        CB.View
          */
         view: null,
 
@@ -32,7 +32,7 @@ MLImport("ViewDelegateInterface.js");
          * @return  {void}
          */
         __titleDidChange: function (value) {
-            ML.Router.setTitle(value);
+            CB.Router.setTitle(value);
         },
 
         /**
@@ -41,7 +41,7 @@ MLImport("ViewDelegateInterface.js");
          * @return  {void}
          */
         __getTitle: function () {
-            return this.title || ML.Router.getTitle();
+            return this.title || CB.Router.getTitle();
         },
 
         /**
@@ -82,7 +82,7 @@ MLImport("ViewDelegateInterface.js");
             this.loadView();
 
             // If that didn't work out, we gotta bolt
-            if (!this.view) throw Error('You must set the view by the end of loadView in ML.ViewController');
+            if (!this.view) throw Error('You must set the view by the end of loadView in CB.ViewController');
 
             // Notify them of what's up yo
             this.viewDidLoad();
@@ -96,7 +96,7 @@ MLImport("ViewDelegateInterface.js");
         loadView: function () {
             // Just in case they don't provide a loadView, we'll set up a default
             // view for them
-            this.setView(new ML.View());
+            this.setView(new CB.View());
         }
         
     };
@@ -107,7 +107,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewDidLoad
          */
         "viewDidLoad",
@@ -116,7 +116,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewWillRender
          */
         "viewWillRender",
@@ -125,7 +125,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewDidRender
          */
         "viewDidRender",
@@ -134,7 +134,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewWillEnterDOM
          */
         "viewWillEnterDOM",
@@ -143,7 +143,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewDidEnterDOM
          */
         "viewDidEnterDOM",
@@ -152,7 +152,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewWillLeaveDOM
          */
         "viewWillLeaveDOM",
@@ -161,7 +161,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewDidLeaveDOM
          */
         "viewDidLeaveDOM",
@@ -170,7 +170,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewWillAppear
          */
         "viewWillAppear",
@@ -179,7 +179,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewDidAppear
          */
         "viewDidAppear",
@@ -188,7 +188,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewWillDisappear
          */
         "viewWillDisappear",
@@ -197,7 +197,7 @@ MLImport("ViewDelegateInterface.js");
          * No documentation available yet.
          * 
          * @function
-         * @lends       ML.ViewController
+         * @lends       CB.ViewController
          * @name        viewDidDisappear
          */
         "viewDidDisappear"
@@ -207,9 +207,9 @@ MLImport("ViewDelegateInterface.js");
     // them all to a single function to preserve memory but still allow them
     // to be executed safely
     notifications.forEach(function (notification) {
-        ViewControllerMembers[notification] = ML.dummyFunction;
+        ViewControllerMembers[notification] = CB.dummyFunction;
     });
 
-    ML.ViewController = ML.Class.create({ implement: ML.ViewDelegateInterface }, ViewControllerMembers);
+    CB.ViewController = CB.Class.create({ implement: CB.ViewDelegateInterface }, ViewControllerMembers);
 
 })(window, document);

@@ -1,5 +1,5 @@
-MLImport("Class.js");
-MLImport("Object.js");
+CBImport("Class.js");
+CBImport("Object.js");
 
 /**
  * No documentation available yet.
@@ -7,7 +7,7 @@ MLImport("Object.js");
  * @author      Jay Phelps
  * @since       0.1
  */ 
-ML.RootResponder = ML.Object.create(/** @lends ML.RootResponder# */{
+CB.RootResponder = CB.Object.create(/** @lends CB.RootResponder# */{
 
     keyPane: null,
 
@@ -36,13 +36,13 @@ ML.RootResponder = ML.Object.create(/** @lends ML.RootResponder# */{
     listenFor: function (keyNames, target, receiver, useCapture) {
         receiver = receiver || this;
 
-        ML.forEach(keyNames, function (keyName) {
+        CB.forEach(keyNames, function (keyName) {
 
             var method = receiver[keyName] = function (e) {
                 
             };
 
-            if (method) ML.Event.bind(
+            if (method) CB.Event.bind(
                 target,
                 keyName,
                 receiver,

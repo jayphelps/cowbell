@@ -6,34 +6,34 @@
  * @author      Jay Phelps
  * @since       0.1
  */
-ML.ApplicationDelegate = ML.Class.create({
+CB.ApplicationDelegate = CB.Class.create({
 
     /**
      * No documentation available yet.
      * 
      * @return  {void}
      */
-    applicationDidFinishLaunching: ML.dummyFunction,
+    applicationDidFinishLaunching: CB.dummyFunction,
 
     /**
      * No documentation available yet.
      * 
      * @return  {void}
      */
-    applicationWillTerminate: ML.dummyFunction,
+    applicationWillTerminate: CB.dummyFunction,
 
     /**
      * No documentation available yet.
      * 
      * @return  {void}
      */
-    applicationDidEnterBackground: ML.dummyFunction,
+    applicationDidEnterBackground: CB.dummyFunction,
 
     /**
      * No documentation available yet.
      * 
      * @return  {void}
      */
-    applicationDidEnterForeground: ML.dummyFunction
+    applicationDidEnterForeground: CB.dummyFunction
 
 });

@@ -1,4 +1,4 @@
-(function (ML, window, document) {
+(function (CB, window, document) {
 
     /**
      * Borrowed heavily from SproutCore for now.
@@ -6,14 +6,14 @@
      * @author      Jay Phelps
      * @since       0.1
      */ 
-    ML.Event = function (originalEvent) {
+    CB.Event = function (originalEvent) {
         var idx;
         var len;
 
         // copy properties from original event, if passed in.
         if (originalEvent) {
             this.originalEvent = originalEvent;
-            var props = ML.Event._props;
+            var props = CB.Event._props;
             var key;
             len = props.length;
             idx = len;
@@ -39,7 +39,7 @@
         }
 
         // Calculate pageX/Y if missing and clientX/Y available
-        if (ML.none(this.pageX) && !ML.none(this.clientX)) {
+        if (CB.none(this.pageX) && !CB.none(this.clientX)) {
             var doc = document.documentElement;
             var body = document.body;
             this.pageX = this.clientX + (doc && doc.scrollLeft || body && body.scrollLeft || 0) - (doc.clientLeft || 0);
@@ -67,10 +67,10 @@
 
         // Normalize wheel delta values for mousewheel events
         if (this.type === "mousewheel" || this.type === "DOMMouseScroll" || this.type === "MozMousePixelScroll") {
-            var deltaMultiplier = ML.Event.MOUSE_WHEEL_MULTIPLIER;
+            var deltaMultiplier = CB.Event.MOUSE_WHEEL_MULTIPLIER;
 
             // normalize wheelDelta, wheelDeltaX, & wheelDeltaY for Safari
-            if (ML.browser.isWebkit && originalEvent.wheelDelta !== undefined) {
+            if (CB.browser.isWebkit && originalEvent.wheelDelta !== undefined) {
                 this.wheelDelta = 0 - (originalEvent.wheelDeltaY || originalEvent.wheelDeltaX);
                 this.wheelDeltaY = 0 - (originalEvent.wheelDeltaY || 0);
                 this.wheelDeltaX = 0 - (originalEvent.wheelDeltaX || 0);
@@ -78,7 +78,7 @@
                 // normalize wheelDelta for Firefox (all Mozilla browsers)
                 // note that we multiple the delta on FF to make it"s acceleration more
                 // natural.
-            } else if (!ML.none(originalEvent.detail) && ML.browser.isMozilla) {
+            } else if (!CB.none(originalEvent.detail) && CB.browser.isMozilla) {
                 if (originalEvent.axis && (originalEvent.axis === originalEvent.HORIZONTAL_AXIS)) {
                     this.wheelDeltaX = originalEvent.detail;
                     this.wheelDeltaY = this.wheelDelta = 0;
@@ -89,7 +89,7 @@
 
                 // handle all other legacy browser
             } else {
-                this.wheelDelta = this.wheelDeltaY = ML.browser.isIE || ML.browser.isOpera ? 0 - originalEvent.wheelDelta : originalEvent.wheelDelta;
+                this.wheelDelta = this.wheelDeltaY = CB.browser.isIE || CB.browser.isOpera ? 0 - originalEvent.wheelDelta : originalEvent.wheelDelta;
                 this.wheelDeltaX = 0;
             }
 
@@ -101,14 +101,14 @@
         return this;
     };
 
-    ML.extend(ML.Event, {
+    CB.extend(CB.Event, {
 
         create: function (e) {
-            return new ML.Event(e);
+            return new CB.Event(e);
         },
 
         bind: function (elem, eventType, target, method, context, useCapture) {
-            if (elem && window.MLView && elem instanceof MLView) {
+            if (elem && window.CBView && elem instanceof CBView) {
                 elem = elem.layer;
             }
 
@@ -132,29 +132,29 @@
             }
 
             // cannot register events on text nodes, etc.
-            if (elem.nodeType === 3 || elem.nodeType === 8) return ML.Event;
+            if (elem.nodeType === 3 || elem.nodeType === 8) return CB.Event;
 
             // For whatever reason, IE has trouble passing the window object
             // around, causing it to be cloned in the process
             
             // @TODO add this back in with the right check
-            /*if (ML.browser.name === ML.BROWSER.ie && elem.setInterval) elem = window;*/
+            /*if (CB.browser.name === CB.BROWSER.ie && elem.setInterval) elem = window;*/
 
             // if target is a function, treat it as the method, with optional context
-            if ( ML.isFunction(target) ) {
+            if ( CB.isFunction(target) ) {
                 context = method;
                 method = target;
                 target = null;
 
                 // handle case where passed method is a key on the target.
-            } else if (target && ML.isString(method)) {
+            } else if (target && CB.isString(method)) {
                 method = target[method];
             }
 
             // Get the handlers queue for this element/eventType.  If the queue does
             // not exist yet, create it and also setup the shared listener for this
             // eventType.
-            var events = ML.data(elem, "ml_events") || ML.data(elem, "ml_events", {}),
+            var events = CB.data(elem, "ml_events") || CB.data(elem, "ml_events", {}),
                 handlers = events[eventType];
             if (!handlers) {
                 handlers = events[eventType] = {};
@@ -162,8 +162,8 @@
             }
 
             // Build the handler array and add to queue
-            handlers[ML.hashFor(target, method)] = [target, method, context];
-            ML.Event._global[eventType] = YES; // optimization for global triggers
+            handlers[CB.hashFor(target, method)] = [target, method, context];
+            CB.Event._global[eventType] = YES; // optimization for global triggers
             // Nullify elem to prevent memory leaks in IE
             elem = events = handlers = null;
             return this;
@@ -172,18 +172,18 @@
         handle: function (event) {
             // ignore events triggered after window is unloaded or if double-called
             // from within a trigger.
-            if ((typeof ML === "undefined") || ML.Event.triggered) return YES;
+            if ((typeof CB === "undefined") || CB.Event.triggered) return YES;
 
             // returned undefined or NO
             var val, ret, namespace, all, handlers, args, key, handler, method, target;
 
             // normalize event across browsers.  The new event will actually wrap the
             // real event with a normalized API.
-            args = ML.toArray(arguments);
-            args[0] = event = ML.Event.normalizeEvent(event || window.event);
+            args = CB.toArray(arguments);
+            args[0] = event = CB.Event.normalizeEvent(event || window.event);
 
             // get the handlers for this event type
-            handlers = (ML.data(this, "ml_events") || {})[event.type];
+            handlers = (CB.data(this, "ml_events") || {})[event.type];
 
             if (!handlers) return NO; // nothing to do
             // invoke all handlers
@@ -199,7 +199,7 @@
 
                 target = handler[0] || this;
 
-                if (!ML.isFunction(method)) {
+                if (!CB.isFunction(method)) {
                     console.log('NOT A FUNCTION:', event, handlers);
                 }
 
@@ -225,11 +225,11 @@
 
             // Save element in cache.  This must be removed later to
             // avoid memory leaks!
-            var guid = ML.uniqueId(elem);
+            var guid = CB.uniqueId(elem);
             this._elements[guid] = elem;
 
-            listener = ML.data(elem, "listener") || ML.data(elem, "listener", function () {
-                return ML.Event.handle.apply(ML.Event._elements[guid], arguments);
+            listener = CB.data(elem, "listener") || CB.data(elem, "listener", function () {
+                return CB.Event.handle.apply(CB.Event._elements[guid], arguments);
             });
 
             // Bind the global event handler to the element
@@ -248,9 +248,9 @@
         normalizeEvent: function (event) {
             if (event === window.event) {
                 // IE can"t do event.normalized on an Event object
-                return ML.Event.create(event);
+                return CB.Event.create(event);
             } else {
-                return event.normalized ? event : ML.Event.create(event);
+                return event.normalized ? event : CB.Event.create(event);
             }
         },
 
@@ -265,4 +265,4 @@
 
     });
 
-})(ML, window, document);
+})(CB, window, document);

@@ -1,16 +1,16 @@
-MLImport("Class.js");
-MLImport("View.js");
+CBImport("Class.js");
+CBImport("View.js");
 
 /**
  * No documentation available yet.
  * 
- * @extends     ML.View
+ * @extends     CB.View
  * @author      Jay Phelps
  * @since       0.1
  */ 
-ML.Pane = ML.Class.create({ extend: ML.View }, {
+CB.Pane = CB.Class.create({ extend: CB.View }, {
 
-    name: "ML-Pane",
+    name: "CB-Pane",
     isPane: YES,
     isKeyPane: NO,
     acceptsKeyPane: NO,
@@ -20,8 +20,8 @@ ML.Pane = ML.Class.create({ extend: ML.View }, {
     rootViewController: null,
 
     __rootViewControllerDidChange: function (controller) {
-        if ( !ML.implementsInterface(controller) ) {
-            throw Error("rootViewController does not conform to the ML.ViewDelegateInterface");
+        if ( !CB.implementsInterface(controller) ) {
+            throw Error("rootViewController does not conform to the CB.ViewDelegateInterface");
         }
 
         var rootView = controller.getView();
@@ -33,11 +33,11 @@ ML.Pane = ML.Class.create({ extend: ML.View }, {
     },
 
     makeKeyPane: function () {
-        ML.RootResponder.setKeyPane(this);
+        CB.RootResponder.setKeyPane(this);
     },
 
     becomeKeyPane: function () {
-        ML.RootResponder.setKeyPane(this);
+        CB.RootResponder.setKeyPane(this);
     },
 
     resignKeyPane: function () {
@@ -45,7 +45,7 @@ ML.Pane = ML.Class.create({ extend: ML.View }, {
     },
 
     appendTo: function (element) {
-        if (!ML.isElement(element)) return false;
+        if (!CB.isElement(element)) return false;
         return !!element.appendChild(this.getLayer());
     },
 

@@ -1,10 +1,10 @@
 /** 
  * @class       
- * @extends     ML.ViewController
+ * @extends     CB.ViewController
  * @author      Jay Phelps
  * @since       1.0
  */
-Todos.ListViewController = ML.Class.create({ extend: ML.ViewController }, {
+Todos.ListViewController = CB.Class.create({ extend: CB.ViewController }, {
 
     loadView: function () {
         var listView = new Todos.ListView();
@@ -20,7 +20,7 @@ Todos.ListViewController = ML.Class.create({ extend: ML.ViewController }, {
         listView.addListItem(item1);
         listView.addListItem(item2);
 
-        ML.delay(function () {
+        CB.delay(function () {
             listView.removeListItem(item1);
         }, 3000);
 

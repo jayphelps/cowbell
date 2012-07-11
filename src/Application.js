@@ -1,6 +1,6 @@
-MLImport("Class.js");
-MLImport("RootResponder.js");
-MLImport("Pane.js");
+CBImport("Class.js");
+CBImport("RootResponder.js");
+CBImport("Pane.js");
 
 (function (window, document) {
 
@@ -11,7 +11,7 @@ MLImport("Pane.js");
      * @author      Jay Phelps
      * @since       0.1
      */
-    var Application = ML.Class.create({
+    var Application = CB.Class.create({
 
         autoStart: NO,
         delegateName: "ApplicationDelegate",
@@ -21,7 +21,7 @@ MLImport("Pane.js");
         panes: [],
 
         __construct: function () {
-            if (Application.sharedApplication) throw Error("MLKit: Only one application can run at a time");
+            if (Application.sharedApplication) throw Error("Cowbell: Only one application can run at a time");
 
             Application.sharedApplication = this;
 
@@ -35,9 +35,9 @@ MLImport("Pane.js");
         start: function () {
             var application = this;
 
-            ML.RootResponder.setup();
+            CB.RootResponder.setup();
 
-            ML.DOM.onReady(function () {
+            CB.DOM.onReady(function () {
                 var delegateClass = application[application.delegateName];
 
                 if (!delegateClass || !delegateClass.isClass) {
@@ -46,14 +46,14 @@ MLImport("Pane.js");
 
                 var delegate = new delegateClass();
 
-                if ( !(delegate instanceof ML.ApplicationDelegate) ) {
-                    throw Error("Application Delegate must inherit ML.ApplicationDelegate");
+                if ( !(delegate instanceof CB.ApplicationDelegate) ) {
+                    throw Error("Application Delegate must inherit CB.ApplicationDelegate");
                 }
 
                 application.delegate = delegate;
                 
                 // Clear the body so it"s clean slate for the app
-                document.body.innerHTML = "";
+                document.body.innerHTCB = "";
                 
                 // Notify app they are ready
                 delegate.applicationDidFinishLaunching(application);
@@ -64,9 +64,9 @@ MLImport("Pane.js");
     Application.sharedApplication = null;
 
     Application.create = function (members) {
-        return new (ML.Class.create({ extend: ML.Application }, members));
+        return new (CB.Class.create({ extend: CB.Application }, members));
     };
 
-    ML.Application = Application;
+    CB.Application = Application;
 
 })(window, document);
