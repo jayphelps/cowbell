@@ -32,6 +32,13 @@ Todos.ListView = ML.Class.create({ extend: ML.View }, {
         listItem = listItems.splice(index, 1)[0];
         console.log(listItem.view, this)
         this.removeChild(listItem.view);
+    },
+
+    _render: function (context) {
+        context.begin();
+            var layer = context.createElement(this.tagName);
+            context.push("Hello world");
+        context.end();
     }
 
 });

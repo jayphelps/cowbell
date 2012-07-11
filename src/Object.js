@@ -1,3 +1,5 @@
+MLImport("Class.js");
+
 /**
  * Does nothing right now...
  * 
@@ -5,6 +7,8 @@
  * @name    ML.Object
  */
 ML.Object = ML.Class.create({}, {
+
+    isObject: true,
 
     create: function (obj) {
         return obj;

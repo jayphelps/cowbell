@@ -177,13 +177,19 @@ MLImport("Responder.js");
                 // update it with our current classes.
                 // Otherwise, we'll just sit on the changes
                 if (!classList.isUpdating) {
+                    var layer = view.layer;
+                    var className = layer.className;
+                    var isSVG = !ML.isUndefined(className.baseVal);
+
                     // The first time this runs we need to merge any
                     // existing classNames off the real layer element
                     // with our ClassList otherwise we'll overwrite them
                     if (!classList._hasSetClassNameBefore) {
-
+                        if (isSVG) {
+                            className = className.baseVal;
+                        }
                         // CSS Classes that already existed on the layer
-                        var originalClasses = view.layer.className.split(" ");
+                        var originalClasses = className.split(" ");
 
                         // Prevent infite recursion
                         classList.isUpdating = YES;
@@ -200,8 +206,14 @@ MLImport("Responder.js");
                         classList._hasSetClassNameBefore = YES;
                     }
 
+                    var newClassName = classList.join(" ");
+
                     // Finally, change the real className of the HTML element
-                    view.layer.className = classList.join(" ");
+                    if (isSVG) {
+                        layer.className.baseVal = newClassName;
+                    } else {
+                        layer.className = newClassName;
+                    }
                 }
             });
         }
@@ -296,7 +308,42 @@ MLImport("Responder.js");
          * @return  {void}
          */
         __getLayer: function () {
-            return this.layer || this.render();
+            if (!this.layer) {
+                var context = this.getRenderContext();
+
+                // Allow pre-hooks before render
+                this.willRender();
+
+                // Actually render the layer with the given context
+                this.render(context);
+
+                // Get the layer out of our context
+                this.layer = context.getElement()
+
+                this.classList._updateClassName();
+
+                this.setIsRendered(YES);
+                
+                // Let them know the view is now rendered and the layer exists
+                this.didRender();
+            }
+
+            return this.layer;
+        },
+
+        // =====================================================================
+        // renderContext + getter
+        // =====================================================================
+
+        /**
+         * @property
+         * @default     null
+         * @type        ML.RenderContext
+         */
+        renderContext: null,
+
+        __getRenderContext: function () {
+            return this.renderContext || (this.renderContext = new ML.RenderContext(this.tagName));
         },
 
         // =====================================================================
@@ -461,22 +508,10 @@ MLImport("Responder.js");
          * 
          * @return  {void}
          */
-        render: function () {
-            // Allow pre-hooks before render
-            this.willRender();
+        render: function (context) {
+            context.drawElement(this.tagName);
 
-            if (!this.layer) {
-                // Create our layer as an HTML element
-                this.layer = document.createElement(this.tagName);
-            }
-
-            this.setIsRendered(YES);
-            this.classList._updateClassName();
-
-            // Let them know the view is now rendered and the layer exists
-            this.didRender();
-
-            return this.layer;
+            return context.getElement();
         },
 
         /**

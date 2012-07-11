@@ -318,7 +318,7 @@
         prototype.__construct = instanceMembers.__construct || function () {};
 
         // Pass a reference to the super class implementations
-        prototype.super = superClass.prototype;
+        prototype.__super = superClass.prototype;
 
         // Actual JS constructor that wraps the class's constructor so we can
         // call super constructors
@@ -336,12 +336,12 @@
                 constructors.push(this.__construct);
             }
 
-            var superDuper = this.super;
+            var superDuper = this.__super;
 
             // Walk the super class chain pushing the constructors in the stack
             while (superDuper && superDuper.__construct) {
                 constructors.push(superDuper.__construct);
-                superDuper = superDuper.super;
+                superDuper = superDuper.__super;
             }   
 
             // Run all the constructors, starting from the bottom (reverse)

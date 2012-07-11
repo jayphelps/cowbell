@@ -20,7 +20,6 @@ ML.Pane = ML.Class.create({ extend: ML.View }, {
     rootViewController: null,
 
     __rootViewControllerDidChange: function (controller) {
-        console.log(controller)
         if ( !ML.implementsInterface(controller) ) {
             throw Error("rootViewController does not conform to the ML.ViewDelegateInterface");
         }
