@@ -22,21 +22,10 @@ Todos.ApplicationDelegate = CB.Class.create({
 
     applicationDidFinishLaunching: function (application) {
         var mainPane = new CB.Pane();
-        var controller = new Todos.ListViewController();
 
-        mainPane.setRootViewController(controller);
+        mainPane.rootViewController = new Todos.ListViewController();
 
         mainPane.makeKeyAndVisible();
-
-        /*var source = document.getElementById("template").innerHTML;
-
-        var template = Handlebars.compile(source);
-
-        var context = { title: "My New Post", body: "This is my first post!" };
-		var html = template(window);
-		console.log(template)
-
-		document.write(html);*/
     }
 
 });

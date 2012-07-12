@@ -7,12 +7,12 @@
     function GetterHelper(key, Key) {
         return function (value) {
             var getter = this["__get" + Key];
-
+            
             if (getter) {
                 return getter.apply(this, arguments);
             }
 
-            return this[key];
+            return this["__" + key];
         };
     }
 
@@ -20,14 +20,14 @@
     // and will trigger any observers if the value actually changes
     function SetterHelper(key, Key) {
         return function (value) {
-            var prevValue = this[key];
+            var prevValue = this["__" + key];
             var setter = this["__set" + Key];
             var ret = this;
 
             if (setter) {
                 ret = setter.call(this, value);
             } else {
-                this[key] = value;
+                this["__" + key] = value;
             }
 
             if (value !== prevValue) {
@@ -36,6 +36,38 @@
 
             return ret;
         };
+    }
+
+    function definePropertyHelpers(obj, key, value) {
+        var Key = upperCaseFirst(key);
+        var getter = new GetterHelper(key, Key);
+        var setter = new SetterHelper(key, Key);
+
+        // Modern browsers.
+        // @FIXME this doesn't check for the exception that will for sure be
+        // raised in IE8 since it only supports defineProperty on DOM elements.
+        if (Object.defineProperty) {
+            Object.defineProperty(obj, key, {
+                get: getter,
+                set: setter,
+                enumerable : true,  
+                configurable : true
+            });
+
+        // Older Mozilla
+        } else if (obj.__defineGetter__ && obj.__defineSetter__) {
+            obj.__defineGetter__(key, getter);
+            obj.__defineSetter__(key, setter);
+
+        // All others
+        } else {
+            throw Error("No support for getter/setters");
+        }
+
+        obj["get" + Key] = new GetterHelper(key, Key);
+        obj["set" + Key] = new SetterHelper(key, Key);
+
+        obj["__" + key] = value;
     }
 
     // Work in progress...Only works if the protocol types are constructors but
@@ -50,7 +82,7 @@
             var protocolConstructor = protocol[key];
 
             if (impConstructor !== protocolConstructor) {
-                throw Error('Implements ' +  key + ' member but is the wrong type. Requires ' + protocolConstructor.name + ' but defined ' + (impConstructor && impConstructor.name) + '.');
+                throw Error("Implements " +  key + " member but is the wrong type. Requires " + protocolConstructor.name + " but defined " + (impConstructor && impConstructor.name) + ".");
             }
         }
     }
@@ -145,13 +177,13 @@
          */
         set: function (key, value) {
             var Key = upperCaseFirst(key);
-            var setter = this['set'+Key];
+            var setter = this["set"+Key];
 
             if (setter) {
                 setter.call(this, value);
             } else {
-                this['get'+Key] = new getterHelper(key, Key);
-                (this['set'+Key] = new setterHelper(key, Key)).call(this, key, Key);
+                this["get"+Key] = new GetterHelper(key, Key);
+                (this["set"+Key] = new SetterHelper(key, Key)).call(this, key, Key);
             }
         },
 
@@ -364,9 +396,7 @@
                 // If the implementation isn't a function we're going to auto
                 // create getter/setters for them
                 if (typeof imp !== "function") {
-                    var Key = upperCaseFirst(key);
-                    prototype['get' + Key] = new GetterHelper(key, Key);
-                    prototype['set' + Key] = new SetterHelper(key, Key);
+                    definePropertyHelpers(prototype, key);
                 }
 
                 return imp;

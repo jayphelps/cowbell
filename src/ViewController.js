@@ -14,13 +14,6 @@ CBImport("ViewDelegateInterface.js");
 
         /**
          * @property
-         * @default     null
-         * @type        CB.View
-         */
-        view: null,
-
-        /**
-         * @property
          * @default     ""
          * @type        String
          */
@@ -44,17 +37,24 @@ CBImport("ViewDelegateInterface.js");
             return this.title || CB.Router.getTitle();
         },
 
+         /**
+         * @property
+         * @default     null
+         * @type        CB.View
+         */
+        view: null,
+
         /**
          * No documentation available yet.
          * 
          * @return  {void}
          */
         __getView: function () {
-            if (!this.view) {
+            if (!this.__view) {
                 this.init();
             }
 
-            return this.view;
+            return this.__view;
         },
 
         /**
@@ -63,11 +63,11 @@ CBImport("ViewDelegateInterface.js");
          * @return  {void}
          */
         __setView: function (view) {
-            if (this.view && this.view.parentView) {
-                this.view.parentView.replaceChildWithChild(this.view, view);
+            if (this.__view && this.__view.parentView) {
+                this.__view.parentView.replaceChildWithChild(this.__view, view);
             }
 
-            this.view = view;
+            this.__view = view;
             view.nextResponder = this;
             view.delegate = this;
         },

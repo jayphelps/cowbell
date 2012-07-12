@@ -30,7 +30,6 @@ Todos.ListView = CB.Class.create({ extend: CB.View }, {
         var index = CB.indexOf(listItems, listItem);
         
         listItem = listItems.splice(index, 1)[0];
-        console.log(listItem.view, this)
         this.removeChild(listItem.view);
     },
 

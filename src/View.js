@@ -309,7 +309,7 @@ CBImport("RenderContext.js");
          * @return  {void}
          */
         __getLayer: function () {
-            if (!this.layer) {
+            if (!this.__layer) {
                 var context = this.getRenderContext();
 
                 // Allow pre-hooks before render
@@ -329,7 +329,7 @@ CBImport("RenderContext.js");
                 this.didRender();
             }
 
-            return this.layer;
+            return this.__layer;
         },
 
         // =====================================================================
@@ -344,7 +344,7 @@ CBImport("RenderContext.js");
         renderContext: null,
 
         __getRenderContext: function () {
-            return this.renderContext || (this.renderContext = new CB.RenderContext(this.tagName));
+            return this.__renderContext || (this.__renderContext = new CB.RenderContext(this.tagName));
         },
 
         // =====================================================================
@@ -379,7 +379,7 @@ CBImport("RenderContext.js");
                 }
             }
 
-            return this.innerText;
+            return this.__innerText;
         },
 
         /**
@@ -388,7 +388,7 @@ CBImport("RenderContext.js");
          * @return  {void}
          */
         __setInnerText: function (value) {
-            this.innerText = value;
+            this.__innerText = value;
 
             this.whenRendered(function (layer) {
                 if (layer.innerText) {
@@ -413,7 +413,7 @@ CBImport("RenderContext.js");
         __getWidth: function (hard) {
             // If they want a hard refresh or if the width is falsey we're
             // going to check the real layer to confirm it's true value
-            if (!this.width || hard) {
+            if (!this.__width || hard) {
                 var layer = this.layer;
                 if (layer) {
                     return parseInt(layer.clientWidth, 10);
@@ -440,7 +440,7 @@ CBImport("RenderContext.js");
                 return false;
             }
 
-            this.style[key] = value;
+            //this.__style[key] = value;
 
             this.whenRendered(function () {
                 return (this.layer.style[key] = value);
@@ -453,7 +453,7 @@ CBImport("RenderContext.js");
          * @return  {void}
          */
         __getStyle: function (key, hard) {
-            var value = this.style[key];
+            var value;// = this.__style[key];
 
             // If a style request turned up undefined or they want a hard refresh
             // we'll actually check out the real style on the layer
@@ -476,10 +476,8 @@ CBImport("RenderContext.js");
          * 
          * @return  {void}
          */
-        __construct: function (layer) {
-            this.layer = layer || null;
+        __construct: function () {
             this.childViews = this.childViews || [];
-            this.style = this.style || {};
 
             var classListTmp = new ClassList("CB-View");
 

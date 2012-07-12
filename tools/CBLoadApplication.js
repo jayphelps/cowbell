@@ -2,17 +2,14 @@
  * Include this file so you can work on CBKit itself without having to rebuild
  * it or have it watch your files, for example, if you don't have node.js.
  */
-
- // 2394
-
- function between(x, min, max) {
-  return x >= min && x <= max;
-}
-
-var totalLineCount = 0;
-var files = [];
-
 (function (window, document) {
+
+    var totalLineCount = 0;
+    var files = [];
+
+    function between(x, min, max) {
+        return x >= min && x <= max;
+    }
 
     function injectDebugScript(source) {
         var header = "data:text/javascript;charset=utf-8,";
@@ -102,7 +99,7 @@ var files = [];
         var err = TypeError(msg);
         console.log('adsf', err, err.stack);
 
-        err.sourceURL = "file:///Users/jayphelps/Projects/CBKit/src/" + file.path;
+        err.sourceURL = "file:///Users/jayphelps/Projects/cowbell/src/" + file.path;
         err.fileName = "http://localhost/test/todos/" + file.path;
         err.lineNumber = 346;
         err.line = 346;

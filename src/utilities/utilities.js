@@ -1,22 +1,24 @@
 (function (CB, window, document) {
 
     // Since we don't know what order Cowbell will be included we have to be
-    // sure we don't clobber a previously included version of underscore.
+    // sure we don't clobber a previously included version of lodash.
     // To solve, we simply stash the existing version and reassign it after.
     // Underscore has a noConflict() helper, however, if there isn't actually
     // a conflict it keeps itself in the global namespace. We may eventually
-    // remove underscore or fork it directly into Cowbell so we don't want any
+    // remove lodash or fork it directly into Cowbell so we don't want any
     // one to depend on it existing.
-    var stashedUnderscore = window._;
+    var stashedLodash = window._;
 
-    CBImport("../../lib/underscore.js");
+    CBImport("../../lib/lodash.js");
 
-    _.extend(CB, window._);
+    // Inherit lodash on our namespace. Since lodash has a VERSION property and
+    // we do too, we need to override theirs.
+    _.extend(CB, window._, { VERSION: CB.VERSION });
 
     // If a stashed version existed, put it back the way it was, otherwise
-    // we'll get rid of the global underscore we created
-    if (stashedUnderscore) {
-        window._ = stashedUnderscore;
+    // we'll get rid of the global lodash we created
+    if (stashedLodash) {
+        window._ = stashedLodash;
     } else {
         try {
             delete window._;
@@ -68,7 +70,7 @@
         return obj == null;
     };
 
-// Because underscore.js assigns itself to "this._" instead of "window._"
+// Because lodash.js assigns itself to "this._" instead of "window._"
 // we need to apply the window context because all of Cowbell is in running in
 // strict mode which causes "this" to be undefined in otherwise implied globals
 }).call(window, CB, window, document);
