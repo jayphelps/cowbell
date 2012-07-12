@@ -1,6 +1,6 @@
 (function (window, document) {
 
-	CBImport("../../lib/handlebars.js");
+    CBImport("../../lib/handlebars.js");
     CBImport("../../src/cowbell.js");
 
     var Todos = CB.Application.create();
