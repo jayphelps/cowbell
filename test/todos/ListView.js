@@ -34,7 +34,7 @@ Todos.ListView = CB.Class.create({ extend: CB.View }, {
         this.removeChild(listItem.view);
     },
 
-    _render: function (context) {
+    _renderd: function (context) {
         context.begin();
             var layer = context.createElement(this.tagName);
             context.push("Hello world");

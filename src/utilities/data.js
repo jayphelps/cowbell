@@ -251,7 +251,7 @@
 
     function dataAttr( elem, key, data ) {
         // If nothing was found internally, try to fetch any
-        // data from the HTCB5 data-* attribute
+        // data from the HTML5 data-* attribute
         if ( data === undefined && elem.nodeType === 1 ) {
 
             var name = "data-" + key.replace( rmultiDash, "-$1" ).toLowerCase();

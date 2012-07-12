@@ -1,5 +1,6 @@
 CBImport("Class.js");
 CBImport("Responder.js");
+CBImport("RenderContext.js");
 
 (function (window, document) {
 
@@ -208,7 +209,7 @@ CBImport("Responder.js");
 
                     var newClassName = classList.join(" ");
 
-                    // Finally, change the real className of the HTCB element
+                    // Finally, change the real className of the HTML element
                     if (isSVG) {
                         layer.className.baseVal = newClassName;
                     } else {
@@ -262,7 +263,7 @@ CBImport("Responder.js");
         isAttached: NO,
 
         /**
-         * Determines what HTCB element the layer should be.
+         * Determines what HTML element the layer should be.
          * 
          * @property
          * @default     "div"
@@ -369,7 +370,7 @@ CBImport("Responder.js");
                     if (layer.innerText) {
                         return layer.innerText;
                     } else {
-                        var value = layer.innerHTCB
+                        var value = layer.innerHTML
                             .replace(/\&lt;br\&gt;/gi,"\n")
                             .replace(/(&lt;([^&gt;]+)&gt;)/gi, "");
 
@@ -393,7 +394,7 @@ CBImport("Responder.js");
                 if (layer.innerText) {
                     layer.innerText = value;
                 } else {
-                    layer.innerHTCB = value.replace(/(<([^>]+)>)/gi, "<$1>");
+                    layer.innerHTML = value.replace(/(<([^>]+)>)/gi, "<$1>");
                 }
             });
         },

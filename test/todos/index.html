@@ -1,2 +1,12 @@
 <script src="../../tools/CBLoadApplication.js"></script>
 <script> CBLoadApplication("Todos.js"); </script>
+
+<script id="template" type="text/x-handlebars-template">
+<div class="entry">
+  <h1>{{title}}</h1>
+  <div class="body">
+    {{body}}
+    {{view CB.View}}
+  </div>
+</div>
+</script>

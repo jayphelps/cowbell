@@ -53,7 +53,7 @@ CBImport("Pane.js");
                 application.delegate = delegate;
                 
                 // Clear the body so it"s clean slate for the app
-                document.body.innerHTCB = "";
+                document.body.innerHTML = "";
                 
                 // Notify app they are ready
                 delegate.applicationDidFinishLaunching(application);
