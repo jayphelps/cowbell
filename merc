@@ -204,7 +204,7 @@ function uglify(sourceCode) {
 }
 
 function include(filePath, fileType) {
-	var exp = /.*MLImport\s*\(\s*['|"]([a-zA-Z0-9_\.\-\/]*)['|"]\s*\)\s*;?/g;
+	var exp = /.*CBImport\s*\(\s*['|"]([a-zA-Z0-9_\.\-\/]*)['|"]\s*\)\s*;?/g;
 
 	var currentDir = (filePath.indexOf('/') > -1) ? filePath.replace(/\/[^\/]+$/, '/') : '';
 	
