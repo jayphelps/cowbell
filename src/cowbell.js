@@ -1,13 +1,13 @@
-/**
- * Cowbell
- * (c) 2012 Jay Phelps
- * MIT licensed
- * https://github.com/jayphelps/cowbell
- */
+// =============================================================================
+// Cowbell
+// (c) 2012 Jay Phelps
+// MIT licensed
+// https://github.com/jayphelps/cowbell
+// =============================================================================
 
 (function (window, document) {
-    // WARNING: Cowbell opts into "strict mode". Any script included inside of here
-    // has those rules applied, including files we CBImport()!
+    // WARNING: Cowbell opts into "strict mode". Any script included inside of
+    // here has those rules applied, including files we CBImport()!
     "use strict";
 
     // prevent a console.log from blowing things up if we are on a browser that
