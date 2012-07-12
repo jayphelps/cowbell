@@ -5,13 +5,13 @@
 // https://github.com/jayphelps/cowbell
 // =============================================================================
 
-(function (window, document) {
+;(function (window, document) {
     // WARNING: Cowbell opts into "strict mode". Any script included inside of
     // here has those rules applied, including files we CBImport()!
     "use strict";
 
-    // prevent a console.log from blowing things up if we are on a browser that
-    // does not support it
+    // Prevent a console functions from blowing things up if we are on a browser
+    // that doesn't support it
     if (typeof console === "undefined") {
         window.console = {}
 
@@ -21,7 +21,7 @@
         console.groupCollapsed = function () {};
     }
 
-    // Alternative booleans for people who prefer obj-c style
+    // Alternative booleans for people who prefer Objective-C/SproutCore style
     window.YES = true;
     window.NO = false;
 
