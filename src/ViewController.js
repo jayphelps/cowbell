@@ -25,7 +25,10 @@ CBImport("ViewDelegateInterface.js");
          * @return  {void}
          */
         __titleDidChange: function (value) {
-            CB.Router.setTitle(value);
+            // @FIXME This was simply wrong because it should only change the
+            // router title if it is the current view controller on the top
+            // of the stack.
+            // CB.Router.setTitle(value);
         },
 
         /**
