@@ -162,6 +162,7 @@ CBImport("RenderContext.js");
      * @return  {void}
      */ 
     ClassList.prototype._updateClassName = function () {
+        return;
         var classList = this;
         var view = this._view;
 
@@ -306,6 +307,24 @@ CBImport("RenderContext.js");
          */
         isRendered: NO,
 
+         /**
+         * @property
+         * @default     NO
+         * @type        Boolean
+         */
+        needsUpdate: NO,
+
+        /**
+         * No documentation available yet.
+         * 
+         * @return  {void}
+         */
+        __needsUpdateDidChange: function (needsUpdate) {
+            if (needsUpdate) {
+                this.update();
+            }
+        },
+
         // =====================================================================
         // layer + getter/setter
         // =====================================================================
@@ -334,18 +353,6 @@ CBImport("RenderContext.js");
                 this.willRender();
 
                 this.render();
-
-                /*// Get the layer out of our context
-                this.__layer = context.getBuffer()[0];
-
-                this.__layer = this.__layer && this.__layer.getSurface();
-                console.log('layer', this.__layer)
-
-                if (!this.__layer) {
-                     this.__layer = document.createElement('no');
-                }*/
-
-                this.classList._updateClassName();
 
                 this.setIsRendered(YES);
                 
@@ -544,11 +551,15 @@ CBImport("RenderContext.js");
 
             this.renderInContext(context);
 
-            this.__layer = context.flush();
-            console.log('and boom', this.__layer)
+            context.flush();
+
+            this.__layer = Array.prototype.splice.call(context.getSurface().childNodes, 0);
+
+            this.setNeedsUpdate(NO);
         },
 
         renderInContext: function (context) {
+            var className = this.classList.join(" ");
             var childViews = this.getChildViews();
 
             context.drawElement(this.getTagName(), function () {
@@ -556,7 +567,14 @@ CBImport("RenderContext.js");
                 for (var i = 0, l = childViews.length; i < l; i++) {
                     childViews[i].renderInContext(this);
                 }
+
+                // Only set the class name if it's truthy
+                className && this.setClassName(className);
             });
+        },
+
+        update: function () {
+            
         },
 
         /**
@@ -595,9 +613,7 @@ CBImport("RenderContext.js");
             childView.parentView = this;
             childView.nextResponder = this;
 
-            this.whenRendered(function () {
-                //this.__layer.appendChild(childView.getLayer());
-            });
+            this.setNeedsUpdate(YES);
         },
 
         /**

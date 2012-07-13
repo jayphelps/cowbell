@@ -16,9 +16,12 @@ Todos.ListItemView = CB.Class.create({ extend: CB.View }, {
     renderInContext: function (context) {
         context.drawElement(this.getTagName(), function () {
             this.drawDiv(function () {
-                this.drawSpan(function () {
-                    this.drawText("Hello world");
-                });
+                this.drawSpan()
+                    .setClassName("TEST")
+                    .setAttribute("EXAMPLE", "man")
+                    .drawText("Hello world");
+
+                this.drawHTML("<h1>THIS IS OK<a href='#'>click me</a></h1>");
             });
         });
     }

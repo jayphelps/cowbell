@@ -19,16 +19,35 @@ CB.RenderContext = CB.Class.create({
 
 CB.HTMLElementContext = CB.Class.create({ extend: CB.RenderContext }, {
 
+    attributes: null,
+    className: "",
+
+    __classNameDidChange: function (value) {
+
+    },
+
     __construct: function (surface) {
         this.setSurface(surface);
+        this.setAttributes([]);
+    },
+
+    setAttribute: function (key, value) {
+        if (key === void 0) return false;
+
+        var obj = (key.key) ? key.key : { key: key, value: value };
+        this.__attributes.push(obj);
+
+        return this;
     },
 
     drawText: function (value, callback) {
         var surface = document.createTextNode(value);
-        var context = new CB.HTMLElementContext(surface);
-        this.getBuffer().push(context);
+        var textContext = new CB.HTMLElementContext(surface);
+        this.getBuffer().push(textContext);
 
-        callback && callback.apply(context);
+        callback && callback.apply(textContext);
+
+        return textContext;
     },
 
     drawElement: function (tagName, callback) {
@@ -37,6 +56,8 @@ CB.HTMLElementContext = CB.Class.create({ extend: CB.RenderContext }, {
         this.getBuffer().push(elementContext);
 
         callback && callback.apply(elementContext);
+
+        return elementContext;
     },
 
     drawDiv: function (callback) {
@@ -47,19 +68,50 @@ CB.HTMLElementContext = CB.Class.create({ extend: CB.RenderContext }, {
         return this.drawElement("span", callback);
     },
 
+    drawHTML: function (html, callback) {
+        var xElement = document.createElement('x-element');
+        xElement.innerHTML = html;
+
+        var surface = document.createDocumentFragment();
+        var childNodes = xElement.childNodes;
+
+        for (var i = 0, l = childNodes.length; i < l; i++) {
+            surface.appendChild(childNodes[i]);
+        }
+
+        var fragmentContext = new CB.HTMLElementContext(surface);
+        this.getBuffer().push(fragmentContext);
+
+        if (callback) throw Error("drawHTML does not have an internal context callback.");
+
+        return fragmentContext;
+    },
+
     flush: function () {
         var buffer = this.getBuffer();
         var surface = this.getSurface();
 
-        buffer.forEach(function (context) {
+        var className = this.getClassName();
+        // Only set the class name if it's truthy
+        className && (surface.className = className);
+
+        var attributes = this.getAttributes();
+
+        for (var attr, i = 0, l = attributes.length; i < l; i++) {
+            attr = attributes[i];
+            surface.setAttribute(attr.key, attr.value);
+        }
+
+        for (var context, j = 0, k = buffer.length; j < k; j++) {
+            context = buffer[j];
             context.flush();
 
             surface.appendChild(context.getSurface());
-        });
+        }
 
         this.resetBuffer();
 
-        return Array.prototype.splice.call(surface.childNodes, 0);
+        return buffer;
     }
 
 });
