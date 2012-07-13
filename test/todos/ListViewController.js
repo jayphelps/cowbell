@@ -1,3 +1,5 @@
+CBImport("ListView.js");
+
 /** 
  * @class       
  * @extends     CB.ViewController
@@ -18,12 +20,6 @@ Todos.ListViewController = CB.ViewController.extend({
 
         listView.addListItem(item1);
         listView.addListItem(item2);
-
-        CB.delay(function () {
-            //listView.removeListItem(item1);
-        }, 1000);
-
-        
     }
 
 });

@@ -10,11 +10,11 @@ Todos.ListItemView = CB.View.extend({
     taskName: "",
 
     __taskNameDidChange: function (value) {
-        this.setInnerText(value);
+        this.innerText = value;
     },
 
     renderInContext: function (context) {
-        context.drawElement(this.getTagName(), function () {
+        context.drawElement(this.tagName, function () {
             this.drawDiv(function () {
                 this.drawSpan()
                     .setClassName("TEST")

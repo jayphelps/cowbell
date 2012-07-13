@@ -1,3 +1,5 @@
+CBImport("ListItemView.js");
+
 /** 
  * @class       
  * @extends     CB.View
@@ -18,11 +20,10 @@ Todos.ListView = CB.View.extend({
 
         var listItemView = new Todos.ListItemView();
 
-        listItemView.setTaskName(listItem.name);
+        listItem.view = listItemView;
+        listItemView.taskName = listItem.name;
 
         this.appendChild(listItemView);
-
-        listItem.view = listItemView;
     },
 
     removeListItem: function (listItem) {
@@ -31,13 +32,6 @@ Todos.ListView = CB.View.extend({
         
         listItem = listItems.splice(index, 1)[0];
         this.removeChild(listItem.view);
-    },
-
-    _renderd: function (context) {
-        context.begin();
-            var layer = context.createElement(this.tagName);
-            context.push("Hello world");
-        context.end();
     }
 
 });

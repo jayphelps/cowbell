@@ -1,12 +1,4 @@
-Handlebars.registerHelper("view", function(text) {
-    //text = Handlebars.Utils.escapeExpression(text);
-    //url  = Handlebars.Utils.escapeExpression(url);
-
-    var result = "";
-    console.log(arguments)
-
-    return ""//new Handlebars.SafeString(result);
-});
+CBImport("ListViewController.js");
 
 /** 
  * @class       
