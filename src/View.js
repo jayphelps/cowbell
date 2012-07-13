@@ -178,43 +178,50 @@ CBImport("RenderContext.js");
                 // update it with our current classes.
                 // Otherwise, we'll just sit on the changes
                 if (!classList.isUpdating) {
-                    var layer = view.layer;
-                    var className = layer.className;
-                    var isSVG = !CB.isUndefined(className.baseVal);
+                    var layer = view.__layer;
+                    layer.forEach(function (node) {
+                        var className = node.className;
 
-                    // The first time this runs we need to merge any
-                    // existing classNames off the real layer element
-                    // with our ClassList otherwise we'll overwrite them
-                    if (!classList._hasSetClassNameBefore) {
+                        // If the node doesn't have a className property let's
+                        // get outta here. No work to do.
+                        if (className === void 0) return;
+
+                        var isSVG = !CB.isUndefined(className.baseVal);
+
+                        // The first time this runs we need to merge any
+                        // existing classNames off the real layer element
+                        // with our ClassList otherwise we'll overwrite them
+                        if (!classList._hasSetClassNameBefore) {
+                            if (isSVG) {
+                                className = className.baseVal;
+                            }
+                            // CSS Classes that already existed on the layer
+                            var originalClasses = className.split(" ");
+
+                            // Prevent infite recursion
+                            classList.isUpdating = YES;
+
+                            // Add each existing className to our ClassList
+                            for (var i = 0, l = originalClasses.length; i < l; i++) {
+                                classList.add(originalClasses[i]);
+                            }
+
+                            // Back to what it was
+                            classList.isUpdating = NO;
+
+                            // So this only runs the first time
+                            classList._hasSetClassNameBefore = YES;
+                        }
+
+                        var newClassName = classList.join(" ");
+
+                        // Finally, change the real className of the HTML element
                         if (isSVG) {
-                            className = className.baseVal;
+                            node.className.baseVal = newClassName;
+                        } else {
+                            node.className = newClassName;
                         }
-                        // CSS Classes that already existed on the layer
-                        var originalClasses = className.split(" ");
-
-                        // Prevent infite recursion
-                        classList.isUpdating = YES;
-
-                        // Add each existing className to our ClassList
-                        for (var i = 0, l = originalClasses.length; i < l; i++) {
-                            classList.add(originalClasses[i]);
-                        }
-
-                        // Back to what it was
-                        classList.isUpdating = NO;
-
-                        // So this only runs the first time
-                        classList._hasSetClassNameBefore = YES;
-                    }
-
-                    var newClassName = classList.join(" ");
-
-                    // Finally, change the real className of the HTML element
-                    if (isSVG) {
-                        layer.className.baseVal = newClassName;
-                    } else {
-                        layer.className = newClassName;
-                    }
+                    });
                 }
             });
         }
@@ -273,6 +280,13 @@ CBImport("RenderContext.js");
 
         /**
          * @property
+         * @default     null
+         * @type        CB.View
+         */
+        parentView: null,
+
+        /**
+         * @property
          * @default     Empty array
          * @type        Array
          */
@@ -309,17 +323,27 @@ CBImport("RenderContext.js");
          * @return  {void}
          */
         __getLayer: function () {
-            if (!this.__layer) {
-                var context = this.getRenderContext();
 
+            if (!this.__layer) {
+                if (this.hasYES) {
+                    console.log(this.__layer)
+                    throw Error('hmm')
+                }
+                this.hasYES = true;
                 // Allow pre-hooks before render
                 this.willRender();
 
-                // Actually render the layer with the given context
-                this.render(context);
+                this.render();
 
-                // Get the layer out of our context
-                this.layer = context.getElement()
+                /*// Get the layer out of our context
+                this.__layer = context.getBuffer()[0];
+
+                this.__layer = this.__layer && this.__layer.getSurface();
+                console.log('layer', this.__layer)
+
+                if (!this.__layer) {
+                     this.__layer = document.createElement('no');
+                }*/
 
                 this.classList._updateClassName();
 
@@ -344,7 +368,14 @@ CBImport("RenderContext.js");
         renderContext: null,
 
         __getRenderContext: function () {
-            return this.__renderContext || (this.__renderContext = new CB.RenderContext(this.tagName));
+            if (!this.__renderContext) {
+                var parentView = this.getParentView();
+                var surface = parentView && parentView.getRenderContext().getSurface() || document.body;
+                console.log('f', surface)
+                this.__renderContext = new CB.HTMLElementContext(surface);
+            }
+
+            return this.__renderContext;
         },
 
         // =====================================================================
@@ -365,7 +396,7 @@ CBImport("RenderContext.js");
          */
         __getInnerText: function (hard) {
             if (hard) {
-                var layer = this.layer;
+                var layer = this.__layer;
                 if (layer) {
                     if (layer.innerText) {
                         return layer.innerText;
@@ -414,7 +445,7 @@ CBImport("RenderContext.js");
             // If they want a hard refresh or if the width is falsey we're
             // going to check the real layer to confirm it's true value
             if (!this.__width || hard) {
-                var layer = this.layer;
+                var layer = this.__layer;
                 if (layer) {
                     return parseInt(layer.clientWidth, 10);
                 }
@@ -443,7 +474,7 @@ CBImport("RenderContext.js");
             //this.__style[key] = value;
 
             this.whenRendered(function () {
-                return (this.layer.style[key] = value);
+                return (this.__layer.style[key] = value);
             });
         },
 
@@ -458,9 +489,9 @@ CBImport("RenderContext.js");
             // If a style request turned up undefined or they want a hard refresh
             // we'll actually check out the real style on the layer
             if (typeof value === "undefined" || hard) {
-                var layer = this.layer;
+                var layer = this.__layer;
                 if (layer) {
-                    return this.layer.style[key];
+                    return this.__layer.style[key];
                 }
             }
 
@@ -507,10 +538,25 @@ CBImport("RenderContext.js");
          * 
          * @return  {void}
          */
-        render: function (context) {
-            context.drawElement(this.tagName);
+        render: function () {
+            //this.__layer = document.createDocumentFragment();
+            var context = this.getRenderContext();
 
-            return context.getElement();
+            this.renderInContext(context);
+
+            this.__layer = context.flush();
+            console.log('and boom', this.__layer)
+        },
+
+        renderInContext: function (context) {
+            var childViews = this.getChildViews();
+
+            context.drawElement(this.getTagName(), function () {
+                // Render all our child views inside this new element context
+                for (var i = 0, l = childViews.length; i < l; i++) {
+                    childViews[i].renderInContext(this);
+                }
+            });
         },
 
         /**
@@ -518,7 +564,8 @@ CBImport("RenderContext.js");
          * 
          * @return  {void}
          */
-        prependChild: function (childView) {                    
+        prependChild: function (childView) {       
+            throw Error("prependChild broken");             
             this.childViews.unshift(childView);
             
             childView.parentView = this;
@@ -529,10 +576,10 @@ CBImport("RenderContext.js");
 
                 // If a first child exists, we're going to insert it before it
                 // otherwise we'll just append it since it's the first
-                if (this.layer.firstChild) {
-                    this.layer.insertBefore(childLayer, this.layer.firstChild);
+                if (this.__layer.firstChild) {
+                    this.__layer.insertBefore(childLayer, this.__layer.firstChild);
                 } else {
-                    this.layer.appendChild(childLayer);
+                    this.__layer.appendChild(childLayer);
                 }
             });
         },
@@ -549,7 +596,7 @@ CBImport("RenderContext.js");
             childView.nextResponder = this;
 
             this.whenRendered(function () {
-                this.layer.appendChild(childView.getLayer());
+                //this.__layer.appendChild(childView.getLayer());
             });
         },
 
@@ -607,6 +654,8 @@ CBImport("RenderContext.js");
          * @return  {void}
          */
         removeChildAtIndex: function (index) {
+            throw Error("removeChildAtIndex broken");
+
             if ( index > -1 && index <= this.childViews.length) {
                                     
                 var childView = this.childViews[index];
@@ -621,7 +670,7 @@ CBImport("RenderContext.js");
                 delete childView.parentView;
 
                 this.whenRendered(function () {
-                    this.layer.removeChild(childView.getLayer());
+                    this.__layer.removeChild(childView.getLayer());
                 });
                 
                 return childView;
@@ -701,15 +750,15 @@ CBImport("RenderContext.js");
         whenRendered: function (callback) {
             var view = this;
 
-            if (this.isRendered && this.layer) {
-                callback.call(this, this.layer);
+            if (this.__isRendered && this.__layer) {
+                callback.call(this, this.__layer);
                 return;
             }
 
             this.addObserver("isRendered", function observer(isRendered) {
-                if (isRendered && view.layer) {
+                if (isRendered && view.__layer) {
                     view.removeObserver("isRendered", observer);
-                    callback.call(view, view.layer);
+                    callback.call(view, view.__layer);
                 }
             });
         }

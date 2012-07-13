@@ -7,7 +7,7 @@
     function GetterHelper(key, Key) {
         return function (value) {
             var getter = this["__get" + Key];
-            
+            //console.log(key)
             if (getter) {
                 return getter.apply(this, arguments);
             }

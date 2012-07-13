@@ -65,7 +65,8 @@ CB.Pane = CB.Class.create({ extend: CB.View }, {
     },
 
     makeKeyAndVisible: function () {
-        this.appendTo(document.body);
+        this.getLayer();
+        //this.appendTo(document.body);
     }
 
 });

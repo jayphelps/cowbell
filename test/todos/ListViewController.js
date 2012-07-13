@@ -20,10 +20,12 @@ Todos.ListViewController = CB.Class.create({ extend: CB.ViewController }, {
         listView.addListItem(item2);
 
         CB.delay(function () {
-            listView.removeListItem(item1);
+            //listView.removeListItem(item1);
         }, 1000);
 
         
     }
 
 });
+
+window.count = 0;
