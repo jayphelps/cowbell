@@ -4,7 +4,7 @@
  * @author      Jay Phelps
  * @since       1.0
  */
-Todos.ListItemView = CB.Class.create({ extend: CB.View }, {
+Todos.ListItemView = CB.View.extend({
 
     tagName: "li",
     taskName: "",

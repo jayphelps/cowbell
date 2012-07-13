@@ -4,7 +4,7 @@
  * @author      Jay Phelps
  * @since       1.0
  */
-Todos.ListViewController = CB.Class.create({ extend: CB.ViewController }, {
+Todos.ListViewController = CB.ViewController.extend({
 
     loadView: function () {
         this.view = new Todos.ListView();
@@ -27,5 +27,3 @@ Todos.ListViewController = CB.Class.create({ extend: CB.ViewController }, {
     }
 
 });
-
-window.count = 0;

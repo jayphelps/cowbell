@@ -14,11 +14,7 @@ Handlebars.registerHelper("view", function(text) {
  * @author      Jay Phelps
  * @since       1.0
  */
-Todos.ApplicationDelegate = CB.Class.create({
-
-    extend: CB.ApplicationDelegate
-
-}, /** @lends Todos.ApplicationDelegate# */ {
+Todos.ApplicationDelegate = CB.ApplicationDelegate.extend(/** @lends Todos.ApplicationDelegate# */{
 
     applicationDidFinishLaunching: function (application) {
         var mainPane = new CB.Pane();

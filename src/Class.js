@@ -418,8 +418,17 @@
             compareObjectWithProtocol(staticMembers, protocol.staticMembers);
         }
 
+        Class.extend = new ExtendHelper();
+
         return Class;
     };
+
+    var ClassCreate = Class.create;
+    function ExtendHelper() {
+        return function (props) {
+            return ClassCreate({ extend: this }, props);
+        };
+    }
 
     CB.Class = Class;
 
