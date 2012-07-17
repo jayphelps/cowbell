@@ -8,12 +8,11 @@ CBImport("ListViewController.js");
  */
 Todos.ApplicationDelegate = CB.ApplicationDelegate.extend(/** @lends Todos.ApplicationDelegate# */{
 
+    router: null,
+
     applicationDidFinishLaunching: function (application) {
-        var mainPane = new CB.Pane();
-
-        mainPane.rootViewController = new Todos.ListViewController();
-
-        mainPane.makeKeyAndVisible();
+        this.router = new CB.Router();
+        this.router.start();
     }
 
 });
