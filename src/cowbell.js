@@ -42,6 +42,7 @@
 
     CBImport("Event.js");
     CBImport("DOM.js");
+    CBImport("Router.js");
 
     CBImport("Responder.js");
     CBImport("RootResponder.js");
