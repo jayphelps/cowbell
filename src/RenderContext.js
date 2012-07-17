@@ -23,10 +23,12 @@ CB.HTMLElementContext = CB.Class.create({ extend: CB.RenderContext }, {
     className: "",
 
     __classNameDidChange: function (value) {
-
+        this.getSurface().className = value;
     },
 
     __construct: function (surface) {
+        if (!surface) throw Error("CB.HTMLElementContext created without a surface.");
+
         this.setSurface(surface);
         this.setAttributes([]);
     },
@@ -34,8 +36,7 @@ CB.HTMLElementContext = CB.Class.create({ extend: CB.RenderContext }, {
     setAttribute: function (key, value) {
         if (key === void 0) return false;
 
-        var obj = (key.key) ? key.key : { key: key, value: value };
-        this.__attributes.push(obj);
+        this.getSurface().setAttribute(key, value);
 
         return this;
     },
@@ -90,17 +91,6 @@ CB.HTMLElementContext = CB.Class.create({ extend: CB.RenderContext }, {
     flush: function () {
         var buffer = this.getBuffer();
         var surface = this.getSurface();
-
-        var className = this.getClassName();
-        // Only set the class name if it's truthy
-        className && (surface.className = className);
-
-        var attributes = this.getAttributes();
-
-        for (var attr, i = 0, l = attributes.length; i < l; i++) {
-            attr = attributes[i];
-            surface.setAttribute(attr.key, attr.value);
-        }
 
         for (var context, j = 0, k = buffer.length; j < k; j++) {
             context = buffer[j];
